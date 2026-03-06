@@ -2,9 +2,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Itinerario</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style type="text/css" id="operaUserStyle"></style>
 <style>
 :root {
   --bg: #f5f0e8;
@@ -732,23 +732,23 @@ body.view-mode .att-notes { display: none; }
 
 </style>
 <style type="text/css" id="operaUserStyle"></style></head>
-<body class="">
+<body class="view-mode">
 
 <div class="app-header">
   <h1>Itinerario</h1>
 </div>
 
 <div class="mode-bar">
-  <button id="viewBtn" class="" onclick="switchToView()">🔍 Visualizza</button>
-  <button id="editBtn" onclick="switchToEdit()" class="active">✏️ Modifica</button>
+  <button id="viewBtn" class="active" onclick="switchToView()">🔍 Visualizza</button>
+  <button id="editBtn" onclick="switchToEdit()" class="">✏️ Modifica</button>
 </div>
 
-<div class="top-actions edit-only" id="topActions" style="display: flex;">
+<div class="top-actions edit-only" id="topActions" style="display: none;">
   <button class="btn btn-ghost btn-sm" onclick="aggiungiGiorno()">➕ Aggiungi giorno</button>
   <button class="btn btn-ghost btn-sm" onclick="copiaItinerario()">📋 Copia itinerario</button>
   <button class="btn btn-ghost btn-sm" onclick="salvaFile()">💾 Scarica HTML</button>
 </div>
-<div class="top-actions view-only" style="display: none;">
+<div class="top-actions view-only" style="display: flex;">
   <button class="btn btn-ghost btn-sm" onclick="copiaItinerario()">📋 Copia itinerario</button>
   <button class="btn btn-ghost btn-sm" onclick="salvaFile()">💾 Scarica HTML</button>
 </div>
@@ -778,68 +778,68 @@ body.view-mode .att-notes { display: none; }
       </div>
     </div>
     <div class="citta-body">
-      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
     <div class="time-block">
-      <input type="time" value="06:10" onblur="calcola()" style="">
+      <input type="time" value="06:10" onblur="calcola()" style="display: none;"><span class="time-view">06:10</span>
       <span>→</span>
-      <input type="time" value="07:40" onblur="calcola()" style="">
+      <input type="time" value="07:40" onblur="calcola()" style="display: none;"><span class="time-view">07:40</span>
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Volo</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Volo</textarea><div class="name-view">Volo</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section" style="display: none;"><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Spesa per il giorno dopo</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Spesa per il giorno dopo</textarea><div class="name-view">Spesa per il giorno dopo</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section" style="display: none;"><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Visita a Lovanio (Non so dove spero che almeno qui mi guidi tu)</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Visita a Lovanio (Non so dove spero che almeno qui mi guidi tu)</textarea><div class="name-view">Visita a Lovanio (Non so dove spero che almeno qui mi guidi tu)</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section" style="display: none;"><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Train+</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Train+</textarea><div class="name-view">Train+</div>
     <div class="price-block">
       <input type="number" value="4" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section" style="display: none;"><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
@@ -879,126 +879,156 @@ body.view-mode .att-notes { display: none; }
       </div>
     </div>
     <div class="citta-body">
-      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
     <div class="time-block">
-      <input type="time" value="06:25" onblur="calcola()" style="">
+      <input type="time" value="06:25" onblur="calcola()" style="display: none;"><span class="time-view">06:25</span>
       <span>→</span>
-      <input type="time" value="09:14" onblur="calcola()" style="">
+      <input type="time" value="09:14" onblur="calcola()" style="display: none;"><span class="time-view">09:14</span>
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Treno Lovanio → Ettelsbruck</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Treno Lovanio → Ettelsbruck</textarea><div class="name-view">Treno Lovanio → Ettelsbruck</div>
     <div class="price-block">
       <input type="number" value="6" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="note-view">Il prezzo è 6€ con Train+</div><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Treno ">
     <input type="text" class="link-url" placeholder="https://…" value="https://www.omio.it/app/search-frontend/journey/train/1037749991/L0AFBE0BB2EE54A9099B6EF96B3D0DF25/7062379699234548802?locale=it">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://www.omio.it/app/search-frontend/journey/train/1037749991/L0AFBE0BB2EE54A9099B6EF96B3D0DF25/7062379699234548802?locale=it" target="_blank">Treno </a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
     <div class="time-block">
-      <input type="time" value="09:18" onblur="calcola()" style="">
+      <input type="time" value="09:18" onblur="calcola()" style="display: none;"><span class="time-view">09:18</span>
       <span>→</span>
-      <input type="time" value="10:14" onblur="calcola()" style="">
+      <input type="time" value="10:14" onblur="calcola()" style="display: none;"><span class="time-view">10:14</span>
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Bus Ettelsbruck → Mullerthal (Trail W7)</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Bus Ettelsbruck → Mullerthal (Trail W7)</textarea><div class="name-view">Bus Ettelsbruck → Mullerthal (Trail W7)</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="note-view">09:18 - Walk to Ettelbruck, Gare routière, duration 4 min
+
+09:22 - departure Ettelbruck, Gare routière, Stop 2
+      with Bus 250 to Junglinster, Op der Gare
+09:48 - arrival Larochette, Bleech
+
+09:48 - Walk to Larochette, Bleech, duration 0 min
+
+10:04 - departure Larochette, Bleech
+      with Bus 262 to Echternach, Gare Centre
+10:17 - arrival Mullerthal, Mëllerdall
+
+-----
+Total duration: 59 min</div><div class="links-section" style="display: none;"><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
     <div class="time-block">
-      <input type="time" value="10:30" onblur="calcola()" style="">
+      <input type="time" value="10:30" onblur="calcola()" style="display: none;"><span class="time-view">10:30</span>
       <span>→</span>
-      <input type="time" value="15:30" onblur="calcola()" style="">
+      <input type="time" value="15:30" onblur="calcola()" style="display: none;"><span class="time-view">15:30</span>
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Trail W7</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Trail W7</textarea><div class="name-view">Trail W7</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="note-view">Il sito dice che ci si impiega tipo 3 ore per farlo, ma ovviamente ce la prenderemo con calma quindi ho messo 5 ore. Sono 10,2 km</div><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Trail W7">
     <input type="text" class="link-url" placeholder="https://…" value="https://www.mullerthal-trail.lu/en/fiche/walking/local-hiking-trail-w7">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://www.mullerthal-trail.lu/en/fiche/walking/local-hiking-trail-w7" target="_blank">Trail W7</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
     <div class="time-block">
-      <input type="time" value="16:00" onblur="calcola()" style="">
+      <input type="time" value="16:00" onblur="calcola()" style="display: none;"><span class="time-view">16:00</span>
       <span>→</span>
-      <input type="time" value="17:00" onblur="calcola()" style="">
+      <input type="time" value="17:00" onblur="calcola()" style="display: none;"><span class="time-view">17:00</span>
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Bus Mullerthal → Lussemburgo</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Bus Mullerthal → Lussemburgo</textarea><div class="name-view">Bus Mullerthal → Lussemburgo</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="note-view">16:00 - departure Mullerthal, Mëllerdall
+      with Bus 242 to Junglinster, P+R
+16:16 - arrival Junglinster, P+R
+
+16:16 - Walk to Junglinster, P+R, duration 0 min
+
+16:23 - departure Junglinster, P+R
+      with Bus 201 to Limpertsberg, Theater (Bus)
+16:43 - arrival Kirchberg, Gare routière Luxexpo, Stop 5
+
+16:43 - Walk to Kirchberg, Gare routière Luxexpo, duration 3 min
+
+16:51 - departure Kirchberg, Gare routière Luxexpo, Stop 4
+      with Bus 502 to Yutz, AéroPark P&amp;R
+17:01 - arrival Luxembourg, Gare Rocade, Stop 4
+
+-----
+Total duration: 1 h</div><div class="links-section" style="display: none;"><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
     <div class="time-block">
-      <input type="time" value="17:05" onblur="calcola()" style="">
+      <input type="time" value="17:05" onblur="calcola()" style="display: none;"><span class="time-view">17:05</span>
       <span>→</span>
-      <input type="time" value="19:45" onblur="calcola()" style="">
+      <input type="time" value="19:45" onblur="calcola()" style="display: none;"><span class="time-view">19:45</span>
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Visita a Lussemburgo</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Visita a Lussemburgo</textarea><div class="name-view">Visita a Lussemburgo</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Mappa con i luoghi da visitare">
     <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/uf4qfvKXLaC2i7jV8">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://maps.app.goo.gl/uf4qfvKXLaC2i7jV8" target="_blank">Mappa con i luoghi da visitare</a>
   </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item">
-    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Quartiere Grund</textarea>
-    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Quartiere Grund</textarea><div class="sotto-nome-view">Quartiere Grund</div>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
       <div class="sotto-prezzo">
         <input type="number" value="0" min="0" onchange="calcola()"> €
       </div>
       <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
     </div>
   </div><div class="sotto-item">
-    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Chem de la Cornice</textarea>
-    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Chem de la Cornice</textarea><div class="sotto-nome-view">Chem de la Cornice</div>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
       <div class="sotto-prezzo">
         <input type="number" value="0" min="0" onchange="calcola()"> €
       </div>
       <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
     </div>
   </div><div class="sotto-item">
-    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Cattedrale di Notre-Dame</textarea>
-    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Cattedrale di Notre-Dame</textarea><div class="sotto-nome-view">Cattedrale di Notre-Dame</div>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
       <div class="sotto-prezzo">
         <input type="number" value="0" min="0" onchange="calcola()"> €
       </div>
       <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
     </div>
   </div><div class="sotto-item">
-    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Palazzo Granducale di Lussemburgo</textarea>
-    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Palazzo Granducale di Lussemburgo</textarea><div class="sotto-nome-view">Palazzo Granducale di Lussemburgo</div>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
       <div class="sotto-prezzo">
         <input type="number" value="0" min="0" onchange="calcola()"> €
       </div>
@@ -1011,22 +1041,22 @@ body.view-mode .att-notes { display: none; }
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
     <div class="time-block">
-      <input type="time" value="19:45" onblur="calcola()" style="">
+      <input type="time" value="19:45" onblur="calcola()" style="display: none;"><span class="time-view">19:45</span>
       <span>→</span>
-      <input type="time" value="23:00" onblur="calcola()" style="">
+      <input type="time" value="23:00" onblur="calcola()" style="display: none;"><span class="time-view">23:00</span>
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Treno Lussemburgo → Lovanio</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Treno Lussemburgo → Lovanio</textarea><div class="name-view">Treno Lussemburgo → Lovanio</div>
     <div class="price-block">
       <input type="number" value="6" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Treno">
     <input type="text" class="link-url" placeholder="https://…" value="https://www.omio.it/app/search-frontend/journey/train/-340265616/L0B4FAEDA87654EA197C1BB624D5B66F2/-1336624402273286888?locale=it">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://www.omio.it/app/search-frontend/journey/train/-340265616/L0B4FAEDA87654EA197C1BB624D5B66F2/-1336624402273286888?locale=it" target="_blank">Treno</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
@@ -1044,7 +1074,7 @@ body.view-mode .att-notes { display: none; }
   </div><div class="giorno collapsed" data-gi="2">
     <div class="giorno-header" onclick="toggleGiorno(this)">
       <span class="day-name" contenteditable="true" onclick="event.stopPropagation()" onblur="aggiornaSelect()">10 Aprile — Venerdì</span>
-      <span class="day-total-badge"><span class="day-total">33.3</span> €</span>
+      <span class="day-total-badge"><span class="day-total">25.3</span> €</span>
       <span class="chevron">▼</span>
     </div>
     <div class="giorno-body">
@@ -1065,25 +1095,32 @@ body.view-mode .att-notes { display: none; }
         <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
       </div>
     </div>
-    <div class="citta-body">
-      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block">
-      <input type="time" value="09:03" onblur="calcola()" style="">
-      <span>→</span>
-      <input type="time" value="10:05" onblur="calcola()" style="">
+    <div class="citta-body"><div class="citta-map-wrap" data-mapid="cmap_mph9a1n24yc">
+    <div class="citta-map-header">
+      <span>🗺 4 luogohi</span>
+      <a class="map-open-btn" href="https://www.google.com/maps/dir/https%3A%2F%2Fmaps.app.goo.gl%2FFikyKvyyVxR7FNgm7/https%3A%2F%2Fmaps.app.goo.gl%2FB8Ug8cC2cSEcnrTR6/https%3A%2F%2Fmaps.app.goo.gl%2F8qwSJbRfXSXY8oEn9/https%3A%2F%2Fmaps.app.goo.gl%2FzZuRKkPZyJo1vQ7f7" target="_blank">↗ Apri percorso in Maps</a>
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Treno Lovanio -&gt; Anversa Centrale</textarea>
+    <div class="citta-map-el leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" id="cmap_mph9a1n24yc" tabindex="0" style="position: relative; outline-style: none;"><div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(738px, 35px, 0px);"><div class="leaflet-pane leaflet-tile-pane"><div class="leaflet-layer " style="z-index: 1; opacity: 1;"><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(1110px, 276px, 0px) scale(2);"></div><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 19; transform: translate3d(370px, 92px, 0px) scale(1);"><img alt="" src="https://b.tile.openstreetmap.org/7/59/41.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-900px, -212px, 0px); opacity: 1;"><img alt="" src="https://a.tile.openstreetmap.org/7/58/41.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-1156px, -212px, 0px); opacity: 1;"></div></div></div><div class="leaflet-pane leaflet-overlay-pane"><svg pointer-events="none" class="leaflet-zoom-animated" width="0" height="0" viewBox="-738 -35 0 0" style="transform: translate3d(-738px, -35px, 0px);"><g><path class="leaflet-interactive" stroke="#3a7bd5" stroke-opacity="0.8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8,5" fill="none" d="M0 0"></path></g></svg></div><div class="leaflet-pane leaflet-shadow-pane"></div><div class="leaflet-pane leaflet-marker-pane"><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(1152px, 322px, 0px); z-index: 322;"><div class="map-num-icon">1</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(1156px, 325px, 0px); z-index: 325;"><div class="map-num-icon">4</div></div></div><div class="leaflet-pane leaflet-tooltip-pane"></div><div class="leaflet-pane leaflet-popup-pane"></div><div class="leaflet-proxy leaflet-zoom-animated" style="transform: translate3d(14896px, 10581px, 0px) scale(64);"></div></div><div class="leaflet-control-container"><div class="leaflet-top leaflet-left"><div class="leaflet-control-zoom leaflet-bar leaflet-control"><a class="leaflet-control-zoom-in" href="#" title="Zoom in" role="button" aria-label="Zoom in" aria-disabled="false"><span aria-hidden="true">+</span></a><a class="leaflet-control-zoom-out" href="#" title="Zoom out" role="button" aria-label="Zoom out" aria-disabled="false"><span aria-hidden="true">−</span></a></div></div><div class="leaflet-top leaflet-right"></div><div class="leaflet-bottom leaflet-left"></div><div class="leaflet-bottom leaflet-right"><div class="leaflet-control-attribution leaflet-control"><a href="https://leafletjs.com" title="A JavaScript library for interactive maps"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" class="leaflet-attribution-flag"><path fill="#4C7BE1" d="M0 0h12v4H0z"></path><path fill="#FFD500" d="M0 4h12v3H0z"></path><path fill="#E0BC00" d="M0 7h12v1H0z"></path></svg> Leaflet</a> <span aria-hidden="true">|</span> © <a href="https://openstreetmap.org">OSM</a></div></div></div></div>
+    <div class="citta-map-status" id="cmap_mph9a1n24yc_status">📍 2/4 luoghi trovati — in ordine di itinerario</div>
+  </div>
+      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block">
+      <input type="time" value="09:03" onblur="calcola()" style="display: none;"><span class="time-view">09:03</span>
+      <span>→</span>
+      <input type="time" value="10:05" onblur="calcola()" style="display: none;"><span class="time-view">10:05</span>
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Treno Lovanio -&gt; Anversa Centrale</textarea><div class="name-view">Treno Lovanio -&gt; Anversa Centrale</div>
     <div class="price-block">
       <input type="number" value="3.4" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="note-view">Ho messo un orario a caso ma direi di non partire troppo presto, tanto il treno ci mette poco e di sicuro saremo molto stanchi dal giorno prima, ma se vuoi prendiamo un treno anche prima (o dopo). Il train + dopo le 9 del mattino (o prima delle 6)</div><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Video">
     <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmVN2ov/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmVN2ov/" target="_blank">Video</a>
   </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item">
-    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Visitiamo la stazione (dai video sembra bella)</textarea>
-    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Visitiamo la stazione (dai video sembra bella)</textarea><div class="sotto-nome-view">Visitiamo la stazione (dai video sembra bella)</div>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
       <div class="sotto-prezzo">
         <input type="number" value="0" min="0" onchange="calcola()"> €
       </div>
@@ -1096,39 +1133,39 @@ body.view-mode .att-notes { display: none; }
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Van Wesenbekestraat (Chinatown)</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Van Wesenbekestraat (Chinatown)</textarea><div class="name-view">Van Wesenbekestraat (Chinatown)</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="note-view">Si trova subito davanti alla stazione centrale</div><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Video">
     <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRm4t6MB/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://vm.tiktok.com/ZNRm4t6MB/" target="_blank">Video</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Chocolate Nation</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Chocolate Nation</textarea><div class="name-view">Chocolate Nation</div>
     <div class="price-block">
       <input type="number" value="18.5" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="note-view">Il prezzo è quello per gli studenti, altrimenti è 19,90€</div><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Video">
     <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmVB2ME/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
@@ -1138,24 +1175,24 @@ body.view-mode .att-notes { display: none; }
     <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/FikyKvyyVxR7FNgm7">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://maps.app.goo.gl/FikyKvyyVxR7FNgm7" target="_blank">Maps</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Zoo di Anversa</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Zoo di Anversa</textarea><div class="name-view">Zoo di Anversa</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Video">
     <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmV9tpD/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
@@ -1166,8 +1203,8 @@ body.view-mode .att-notes { display: none; }
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://maps.app.goo.gl/B8Ug8cC2cSEcnrTR6" target="_blank">Maps</a>
   </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item skipped">
-    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Visita allo Zoo</textarea>
-    <div class="sotto-item-row"><button class="check-toggle" title="Includi / escludi" style="display: none;">○</button>
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Visita allo Zoo</textarea><div class="sotto-nome-view">Visita allo Zoo</div>
+    <div class="sotto-item-row"><button class="check-toggle" title="Includi / escludi" style="">○</button>
       <div class="sotto-prezzo">
         <input type="number" value="34.5" min="0" onchange="calcola()"> €
       </div>
@@ -1180,17 +1217,17 @@ body.view-mode .att-notes { display: none; }
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Passeggiata a Meir</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Passeggiata a Meir</textarea><div class="name-view">Passeggiata a Meir</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Video Meir">
     <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmV9npe/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
@@ -1201,8 +1238,8 @@ body.view-mode .att-notes { display: none; }
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmVhS1M/" target="_blank">Video Stadsfeestzaal </a>
   </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item">
-    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Stadsfeestzaal (Negozi) </textarea>
-    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Stadsfeestzaal (Negozi) </textarea><div class="sotto-nome-view">Stadsfeestzaal (Negozi) </div>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
       <div class="sotto-prezzo">
         <input type="number" value="0" min="0" onchange="calcola()"> €
       </div>
@@ -1215,17 +1252,17 @@ body.view-mode .att-notes { display: none; }
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Cattedrale di Anversa e Grote Markt </textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Cattedrale di Anversa e Grote Markt </textarea><div class="name-view">Cattedrale di Anversa e Grote Markt </div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="note-view">Piazza principale + Cattedrale + Municipio</div><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Cattedrale">
     <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/DFHgHeZjUmggezbNA">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
@@ -1236,16 +1273,16 @@ body.view-mode .att-notes { display: none; }
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://maps.app.goo.gl/JombViLDLETDmfrN6" target="_blank">Vlaaikensgang </a>
   </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item">
-    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Passaggio di Vlaaikensgang (Si trova vicino alla cattedrale, un po' nascosto)</textarea>
-    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Passaggio di Vlaaikensgang (Si trova vicino alla cattedrale, un po' nascosto)</textarea><div class="sotto-nome-view">Passaggio di Vlaaikensgang (Si trova vicino alla cattedrale, un po' nascosto)</div>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
       <div class="sotto-prezzo">
         <input type="number" value="0" min="0" onchange="calcola()"> €
       </div>
       <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
     </div>
   </div><div class="sotto-item skipped">
-    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Ingresso nella Cattedrale</textarea>
-    <div class="sotto-item-row"><button class="check-toggle" title="Includi / escludi" style="display: none;">○</button>
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Ingresso nella Cattedrale</textarea><div class="sotto-nome-view">Ingresso nella Cattedrale</div>
+    <div class="sotto-item-row"><button class="check-toggle" title="Includi / escludi" style="">○</button>
       <div class="sotto-prezzo">
         <input type="number" value="10" min="0" onchange="calcola()"> €
       </div>
@@ -1258,17 +1295,17 @@ body.view-mode .att-notes { display: none; }
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Het Steen Castle</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Het Steen Castle</textarea><div class="name-view">Het Steen Castle</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Video">
     <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmVubbP/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
@@ -1278,24 +1315,24 @@ body.view-mode .att-notes { display: none; }
     <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/8qwSJbRfXSXY8oEn9">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://maps.app.goo.gl/8qwSJbRfXSXY8oEn9" target="_blank">Maps</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Eilandje (Quartiere)</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Eilandje (Quartiere)</textarea><div class="name-view">Eilandje (Quartiere)</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Video Eilandje">
     <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmVPSSy/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
@@ -1305,9 +1342,9 @@ body.view-mode .att-notes { display: none; }
     <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmVrwYa/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmVrwYa/" target="_blank">Video MAS</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item">
-    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">MAS Museum (L'ingresso alla terrazza è gratis)</textarea>
-    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item skipped">
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">MAS Museum (L'ingresso alla terrazza è gratis)</textarea><div class="sotto-nome-view">MAS Museum (L'ingresso alla terrazza è gratis)</div>
+    <div class="sotto-item-row"><button class="check-toggle" title="Includi / escludi" style="">○</button>
       <div class="sotto-prezzo">
         <input type="number" value="8" min="0" onchange="calcola()"> €
       </div>
@@ -1320,17 +1357,17 @@ body.view-mode .att-notes { display: none; }
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Boekenbergpark</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Boekenbergpark</textarea><div class="name-view">Boekenbergpark</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Video">
     <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmV1SxC/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
@@ -1340,24 +1377,24 @@ body.view-mode .att-notes { display: none; }
     <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/zZuRKkPZyJo1vQ7f7">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://maps.app.goo.gl/zZuRKkPZyJo1vQ7f7" target="_blank">Maps</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Treno Anversa -&gt; Lovanio</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Treno Anversa -&gt; Lovanio</textarea><div class="name-view">Treno Anversa -&gt; Lovanio</div>
     <div class="price-block">
       <input type="number" value="3.4" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section" style="display: none;"><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
@@ -1369,13 +1406,13 @@ body.view-mode .att-notes { display: none; }
   </div></div>
       <div class="giorno-subtotal">
         <span class="label">Totale giorno</span>
-        <span class="amount day-total2">33.3</span><span style="color:var(--muted);font-size:13px"> €</span>
+        <span class="amount day-total2">25.3</span><span style="color:var(--muted);font-size:13px"> €</span>
       </div>
     </div>
-  </div><div class="giorno" data-gi="3">
+  </div><div class="giorno collapsed" data-gi="3">
     <div class="giorno-header" onclick="toggleGiorno(this)">
       <span class="day-name" contenteditable="true" onclick="event.stopPropagation()" onblur="aggiornaSelect()">11 Aprile — Sabato</span>
-      <span class="day-total-badge"><span class="day-total">26.2</span> €</span>
+      <span class="day-total-badge"><span class="day-total">18.2</span> €</span>
       <span class="chevron">▼</span>
     </div>
     <div class="giorno-body">
@@ -1397,17 +1434,22 @@ body.view-mode .att-notes { display: none; }
       </div>
     </div>
     <div class="citta-body">
-      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Preparazione per il giorno dopo (Se dobbiamo comprare qualcosa)</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Preparazione per il giorno dopo (Se dobbiamo comprare qualcosa)</textarea><div class="name-view">Preparazione per il giorno dopo (Se dobbiamo comprare qualcosa)</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section" style="display: none;"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="">
+    <input type="text" class="link-url" placeholder="https://…" value="">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="#" target="_blank">Link</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
@@ -1429,57 +1471,86 @@ body.view-mode .att-notes { display: none; }
         <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
       </div>
     </div>
-    <div class="citta-body">
-      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+    <div class="citta-body"><div class="citta-map-wrap" data-mapid="cmap_ebthpb02re">
+    <div class="citta-map-header">
+      <span>🗺 10 luogohi</span>
+      <a class="map-open-btn" href="https://www.google.com/maps/dir/https%3A%2F%2Fmaps.app.goo.gl%2F8SJKMLKZYyumyhvq8/https%3A%2F%2Fmaps.app.goo.gl%2FiNHrphigo4iQ6TQA6/https%3A%2F%2Fmaps.app.goo.gl%2FKP4FSs4udET77ZNd9/https%3A%2F%2Fmaps.app.goo.gl%2FLiqgrh4GLb7tt1J57/https%3A%2F%2Fmaps.app.goo.gl%2FBqR9SWu5TSBw5rhV6/https%3A%2F%2Fmusee-magritte-museum.be%2Fen%2Fyour-visit%2Fpractical-info-rmfab%2Fadmission/https%3A%2F%2Fmaps.app.goo.gl%2Fj2c9cttoMds4ScxL9/https%3A%2F%2Fmaps.app.goo.gl%2FmwR2r1kqHTVZnvgK6/https%3A%2F%2Fmaps.app.goo.gl%2FDm3G8D3DS76fyDZS7/https%3A%2F%2Fmaps.app.goo.gl%2F8SJKMLKZYyumyhvq8" target="_blank">↗ Apri percorso in Maps</a>
+    </div>
+    <div class="citta-map-el leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" id="cmap_ebthpb02re" tabindex="0" style="position: relative;"><div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(162px, -209px, 0px);"><div class="leaflet-pane leaflet-tile-pane"><div class="leaflet-layer " style="z-index: 1; opacity: 1;"><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(172px, 244px, 0px) scale(0.5);"></div><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 19; transform: translate3d(308px, 148px, 0px) scale(1);"><img alt="" src="https://c.tile.openstreetmap.org/12/2097/1373.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(114px, -123px, 0px); opacity: 1;"><img alt="" src="https://a.tile.openstreetmap.org/12/2098/1373.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(370px, -123px, 0px); opacity: 1;"><img alt="" src="https://a.tile.openstreetmap.org/12/2097/1374.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(114px, 133px, 0px); opacity: 1;"><img alt="" src="https://b.tile.openstreetmap.org/12/2098/1374.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(370px, 133px, 0px); opacity: 1;"><img alt="" src="https://b.tile.openstreetmap.org/12/2096/1373.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-142px, -123px, 0px); opacity: 1;"><img alt="" src="https://b.tile.openstreetmap.org/12/2099/1373.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(626px, -123px, 0px); opacity: 1;"><img alt="" src="https://c.tile.openstreetmap.org/12/2096/1374.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-142px, 133px, 0px); opacity: 1;"><img alt="" src="https://c.tile.openstreetmap.org/12/2099/1374.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(626px, 133px, 0px); opacity: 1;"><img alt="" src="https://a.tile.openstreetmap.org/12/2095/1373.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-398px, -123px, 0px); opacity: 1;"><img alt="" src="https://c.tile.openstreetmap.org/12/2100/1373.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(882px, -123px, 0px); opacity: 1;"><img alt="" src="https://b.tile.openstreetmap.org/12/2095/1374.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-398px, 133px, 0px); opacity: 1;"><img alt="" src="https://a.tile.openstreetmap.org/12/2100/1374.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(882px, 133px, 0px); opacity: 1;"><img alt="" src="https://c.tile.openstreetmap.org/12/2094/1373.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-654px, -123px, 0px); opacity: 1;"><img alt="" src="https://a.tile.openstreetmap.org/12/2101/1373.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1138px, -123px, 0px); opacity: 1;"><img alt="" src="https://a.tile.openstreetmap.org/12/2094/1374.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-654px, 133px, 0px); opacity: 1;"><img alt="" src="https://b.tile.openstreetmap.org/12/2101/1374.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(1138px, 133px, 0px); opacity: 1;"></div></div></div><div class="leaflet-pane leaflet-overlay-pane"><svg pointer-events="none" class="leaflet-zoom-animated" width="2112" height="288" viewBox="-338 185 2112 288" style="transform: translate3d(-338px, 185px, 0px);"><g><path class="leaflet-interactive" stroke="#3a7bd5" stroke-opacity="0.8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8,5" fill="none" d="M574 286L578 280L563 278L548 293L568 298L574 305L628 329L675 311L574 286"></path></g></svg></div><div class="leaflet-pane leaflet-shadow-pane"></div><div class="leaflet-pane leaflet-marker-pane"><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(574px, 286px, 0px); z-index: 286;"><div class="map-num-icon">1</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(578px, 280px, 0px); z-index: 280;"><div class="map-num-icon">2</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(563px, 278px, 0px); z-index: 278;"><div class="map-num-icon">3</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(548px, 293px, 0px); z-index: 293;"><div class="map-num-icon">4</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(568px, 298px, 0px); z-index: 298;"><div class="map-num-icon">5</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(574px, 305px, 0px); z-index: 305;"><div class="map-num-icon">6</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(575px, 305px, 0px); z-index: 305;"><div class="map-num-icon">7</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(628px, 329px, 0px); z-index: 329;"><div class="map-num-icon">8</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(675px, 311px, 0px); z-index: 311;"><div class="map-num-icon">9</div></div><div class="leaflet-marker-icon leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -12px; margin-top: -12px; width: 24px; height: 24px; transform: translate3d(574px, 286px, 0px); z-index: 286;"><div class="map-num-icon">10</div></div></div><div class="leaflet-pane leaflet-tooltip-pane"></div><div class="leaflet-pane leaflet-popup-pane"></div><div class="leaflet-proxy leaflet-zoom-animated" style="transform: translate3d(537128px, 351792px, 0px) scale(2048);"></div></div><div class="leaflet-control-container"><div class="leaflet-top leaflet-left"><div class="leaflet-control-zoom leaflet-bar leaflet-control"><a class="leaflet-control-zoom-in" href="#" title="Zoom in" role="button" aria-label="Zoom in" aria-disabled="false"><span aria-hidden="true">+</span></a><a class="leaflet-control-zoom-out" href="#" title="Zoom out" role="button" aria-label="Zoom out" aria-disabled="false"><span aria-hidden="true">−</span></a></div></div><div class="leaflet-top leaflet-right"></div><div class="leaflet-bottom leaflet-left"></div><div class="leaflet-bottom leaflet-right"><div class="leaflet-control-attribution leaflet-control"><a href="https://leafletjs.com" title="A JavaScript library for interactive maps"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" class="leaflet-attribution-flag"><path fill="#4C7BE1" d="M0 0h12v4H0z"></path><path fill="#FFD500" d="M0 4h12v3H0z"></path><path fill="#E0BC00" d="M0 7h12v1H0z"></path></svg> Leaflet</a> <span aria-hidden="true">|</span> © <a href="https://openstreetmap.org">OSM</a></div></div></div></div>
+    <div class="citta-map-status" id="cmap_ebthpb02re_status">📍 10/10 luoghi trovati — in ordine di itinerario</div>
+  </div>
+      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Treno Lovanio -&gt; Bruxelels</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 36px; display: none;">Treno Lovanio -&gt; Bruxelels</textarea><div class="name-view">Treno Lovanio -&gt; Bruxelels</div>
     <div class="price-block">
       <input type="number" value="4.1" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section" style="display: none;"><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi">✓</button>
-    <div class="time-block">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 36px;">Nuova attività</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 36px; display: none;">Nuova attività</textarea><div class="name-view">Gare Centrale</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="note-view">Stazione</div><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="">
     <input type="text" class="link-url" placeholder="https://…" value="">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
-    <a class="link-view-badge" href="https://maps.app.goo.gl/iNHrphigo4iQ6TQA6" target="_blank">Maps</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <a class="link-view-badge" href="https://maps.app.goo.gl/8SJKMLKZYyumyhvq8" target="_blank">Maps</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Galeries Royales Saint Hubert</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Cathédrale Saints-Michel-et-Gudule</textarea><div class="name-view">Cathédrale Saints-Michel-et-Gudule</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
+    <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/iNHrphigo4iQ6TQA6">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/iNHrphigo4iQ6TQA6" target="_blank">Maps</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Galeries Royales Saint Hubert</textarea><div class="name-view">Galeries Royales Saint Hubert</div>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
     <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/KP4FSs4udET77ZNd9">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
@@ -1489,68 +1560,68 @@ body.view-mode .att-notes { display: none; }
     <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRm7FVAc/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://vm.tiktok.com/ZNRm7FVAc/" target="_blank">Video</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Grand Place</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Grand Place</textarea><div class="name-view">Grand Place</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
     <input type="text" class="link-url" placeholder="https://…" value="Grand Place">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="Grand Place" target="_blank">Maps</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi">✓</button>
-    <div class="time-block">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 36px;">Nuova attività</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Manneken Pis</textarea><div class="name-view">Manneken Pis</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
-    <input type="text" class="link-label" placeholder="Etichetta" value="">
-    <input type="text" class="link-url" placeholder="https://…" value="">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
+    <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/Liqgrh4GLb7tt1J57">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://maps.app.goo.gl/Liqgrh4GLb7tt1J57" target="_blank">Maps</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Mont des Arts</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Mont des Arts</textarea><div class="name-view">Mont des Arts</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
     <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/BqR9SWu5TSBw5rhV6">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
@@ -1560,24 +1631,24 @@ body.view-mode .att-notes { display: none; }
     <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmW5Qq8/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmW5Qq8/" target="_blank">Video</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Museo Magritte</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Museo Magritte</textarea><div class="name-view">Museo Magritte</div>
     <div class="price-block">
       <input type="number" value="5" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="note-view">(Il prezzo è con lo sconto studente, è carino ma forse non ne vale troppo la pena per il tempo che ci passiamo, è un po' monotematico)</div><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Biglietti">
     <input type="text" class="link-url" placeholder="https://…" value="https://musee-magritte-museum.be/en/your-visit/practical-info-rmfab/admission">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
@@ -1592,31 +1663,31 @@ body.view-mode .att-notes { display: none; }
     <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmWxyE8/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmWxyE8/" target="_blank">Video</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Palazzo Reale</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 36px; display: none;">Palazzo Reale</textarea><div class="name-view">Place Royale</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
     <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/j2c9cttoMds4ScxL9">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://maps.app.goo.gl/j2c9cttoMds4ScxL9" target="_blank">Maps</a>
   </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item">
-    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 18px;"></textarea>
-    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Parco di Bruxelles</textarea><div class="sotto-nome-view">Parco di Bruxelles</div>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
       <div class="sotto-prezzo">
         <input type="number" value="0" min="0" onchange="calcola()"> €
       </div>
@@ -1629,63 +1700,63 @@ body.view-mode .att-notes { display: none; }
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi">✓</button>
-    <div class="time-block">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 36px;">Nuova attività</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Institut royal des Sciences naturelles de Belgique</textarea><div class="name-view">Institut royal des Sciences naturelles de Belgique</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
-    <input type="text" class="link-label" placeholder="Etichetta" value="">
-    <input type="text" class="link-url" placeholder="https://…" value="">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="note-view">Ingresso a 5 euro per gli studenti</div><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
+    <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/mwR2r1kqHTVZnvgK6">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://maps.app.goo.gl/mwR2r1kqHTVZnvgK6" target="_blank">Maps</a>
   </div><div class="link-row">
-    <input type="text" class="link-label" placeholder="Etichetta" value="">
-    <input type="text" class="link-url" placeholder="https://…" value="">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRm7usrS/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://vm.tiktok.com/ZNRm7usrS/" target="_blank">Video</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi">✓</button>
-    <div class="time-block">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 36px;">Nuova attività</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Parc du Cinquantenaire</textarea><div class="name-view">Parc du Cinquantenaire</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
-    <input type="text" class="link-label" placeholder="Etichetta" value="">
-    <input type="text" class="link-url" placeholder="https://…" value="">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
+    <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/Dm3G8D3DS76fyDZS7">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://maps.app.goo.gl/Dm3G8D3DS76fyDZS7" target="_blank">Maps</a>
   </div><div class="link-row">
-    <input type="text" class="link-label" placeholder="Etichetta" value="">
-    <input type="text" class="link-url" placeholder="https://…" value="">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video Parc du Cinquantenaire">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRm72h4u/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://vm.tiktok.com/ZNRm72h4u/" target="_blank">Video Parc du Cinquantenaire</a>
   </div><div class="link-row">
-    <input type="text" class="link-label" placeholder="Etichetta" value="">
-    <input type="text" class="link-url" placeholder="https://…" value="">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video Autoworld">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmWcCJx/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmWcCJx/" target="_blank">Video Autoworld</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item">
-    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 18px;"></textarea>
-    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item skipped">
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Autoworld: Museo con alcune auto, chiude alle 18 e potrebbe annoiarti ahah</textarea><div class="sotto-nome-view">Autoworld: Museo con alcune auto, chiude alle 18 e potrebbe annoiarti ahah</div>
+    <div class="sotto-item-row"><button class="check-toggle" title="Includi / escludi" style="">○</button>
       <div class="sotto-prezzo">
-        <input type="number" value="0" min="0" onchange="calcola()"> €
+        <input type="number" value="13" min="0" onchange="calcola()"> €
       </div>
       <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
     </div>
@@ -1696,34 +1767,56 @@ body.view-mode .att-notes { display: none; }
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Treno Bruxelles -&gt; Lovanio</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 36px; display: none;">Nuova attività</textarea><div class="name-view">Gare Centrale</div>
     <div class="price-block">
-      <input type="number" value="4.1" min="0" onchange="calcola()"> €
+      <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="note-view">Stazione</div><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="">
+    <input type="text" class="link-url" placeholder="https://…" value="">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/8SJKMLKZYyumyhvq8" target="_blank">Maps</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Posti carini dove mangiare</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Treno Bruxelles -&gt; Lovanio</textarea><div class="name-view">Treno Bruxelles -&gt; Lovanio</div>
+    <div class="price-block">
+      <input type="number" value="4.1" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section" style="display: none;"><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Posti carini dove mangiare</textarea><div class="name-view">Posti carini dove mangiare</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
     <input type="text" class="link-label" placeholder="Etichetta" value="">
     <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmWJEyN/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
@@ -1733,7 +1826,7 @@ body.view-mode .att-notes { display: none; }
     <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmWRtQS/">
     <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
     <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmWRtQS/" target="_blank">Link</a>
-  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
@@ -1745,7 +1838,7 @@ body.view-mode .att-notes { display: none; }
   </div></div>
       <div class="giorno-subtotal">
         <span class="label">Totale giorno</span>
-        <span class="amount day-total2">26.2</span><span style="color:var(--muted);font-size:13px"> €</span>
+        <span class="amount day-total2">18.2</span><span style="color:var(--muted);font-size:13px"> €</span>
       </div>
     </div>
   </div><div class="giorno" data-gi="4">
@@ -1987,51 +2080,51 @@ body.view-mode .att-notes { display: none; }
       </div>
     </div>
     <div class="citta-body">
-      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Laeken Park</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Laeken Park</textarea><div class="name-view">Laeken Park</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section" style="display: none;"><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Atomium</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Atomium</textarea><div class="name-view">Atomium</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section" style="display: none;"><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
     </div>
     <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
     <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
-  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
-    <div class="time-block" style="">
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="">✓</button>
+    <div class="time-block" style="display: none;">
       <input type="time" value="" onblur="calcola()">
       <span>→</span>
       <input type="time" value="" onblur="calcola()">
     </div>
-    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Torre Giapponese</textarea>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="display: none;">Torre Giapponese</textarea><div class="name-view">Torre Giapponese</div>
     <div class="price-block">
       <input type="number" value="0" min="0" onchange="calcola()"> €
     </div>
-  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+  </div><textarea class="att-notes" placeholder="Note…" style="display: none;"></textarea><div class="links-section" style="display: none;"><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style="display: none;"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
     <div class="move-controls">
       <button onclick="su(this,'li')">▲</button>
       <button onclick="giu(this,'li')">▼</button>
@@ -2050,7 +2143,7 @@ body.view-mode .att-notes { display: none; }
 
 <div class="total-bar">
   <span class="label">Totale complessivo</span>
-  <span class="total-amount"><span id="totale">75.5</span> €</span>
+  <span class="total-amount"><span id="totale">59.5</span> €</span>
 </div>
 
 <script>
@@ -2416,7 +2509,7 @@ const initialData = [
               {
                 "name": "MAS Museum (L'ingresso alla terrazza è gratis)",
                 "price": 8,
-                "skipped": false
+                "skipped": true
               }
             ],
             "skipped": false,
@@ -2487,6 +2580,22 @@ const initialData = [
             "notes": "",
             "price": 4.1,
             "links": [],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Gare Centrale",
+            "notes": "Stazione",
+            "price": 0,
+            "links": [
+              {
+                "label": "Maps",
+                "url": "https://maps.app.goo.gl/8SJKMLKZYyumyhvq8"
+              }
+            ],
             "sotto": [],
             "skipped": false,
             "checked": true
@@ -2606,7 +2715,7 @@ const initialData = [
           {
             "start": "",
             "end": "",
-            "name": "Palazzo Reale",
+            "name": "Place Royale",
             "notes": "",
             "price": 0,
             "links": [
@@ -2629,8 +2738,8 @@ const initialData = [
             "start": "",
             "end": "",
             "name": "Institut royal des Sciences naturelles de Belgique",
-            "notes": "",
-            "price": 0,
+            "notes": "Ingresso a 5 euro per gli studenti",
+            "price": 5,
             "links": [
               {
                 "label": "Maps",
@@ -2669,9 +2778,25 @@ const initialData = [
               {
                 "name": "Autoworld: Museo con alcune auto, chiude alle 18 e potrebbe annoiarti ahah",
                 "price": 13,
-                "skipped": false
+                "skipped": true
               }
             ],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Gare Centrale",
+            "notes": "Stazione",
+            "price": 0,
+            "links": [
+              {
+                "label": "Maps",
+                "url": "https://maps.app.goo.gl/8SJKMLKZYyumyhvq8"
+              }
+            ],
+            "sotto": [],
             "skipped": false,
             "checked": true
           },
@@ -2709,7 +2834,7 @@ const initialData = [
         ]
       }
     ],
-    "collapsed": false
+    "collapsed": true
   },
   {
     "title": "12 Aprile — Domenica",
@@ -3451,10 +3576,10 @@ function getCittaWaypoints(cittaEl) {
 }
 
 // Costruisce URL google.com/maps/dir/ con tutte le tappe (apri in Maps)
-// Usa i nomi delle attività + città come tappe di testo
-function buildDirUrl(points, cityCtx) {
-  // Formato corretto: /maps/dir/Nome+Luogo,+Città/Altro+Luogo,+Città/
-  const stops = points.map(p => encodeURIComponent(p.name + ', ' + cityCtx)).join('/');
+function buildDirUrl(points) {
+  // Usa i maps.app.goo.gl come stop: /maps/dir/url1/url2/...
+  // Google Maps /dir/ accetta URL encoded come tappe
+  const stops = points.map(p => encodeURIComponent(p.url)).join('/');
   return 'https://www.google.com/maps/dir/' + stops;
 }
 
@@ -3486,7 +3611,7 @@ async function buildCittaMap(cittaEl) {
 
   const cityCtx = (cittaEl.querySelector('h3')?.innerText || '').trim().replace(/\s*\d+$/, '');
   const mapId = 'cmap_' + Math.random().toString(36).slice(2);
-  const dirUrl = buildDirUrl(points, cityCtx);
+  const dirUrl = buildDirUrl(points);
 
   // Wrapper
   const wrap = document.createElement('div');
