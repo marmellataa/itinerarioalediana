@@ -1,0 +1,3571 @@
+<html lang="it"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Itinerario</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root {
+  --bg: #f5f0e8;
+  --surface: #fffdf8;
+  --surface2: #f0ebe0;
+  --border: #ddd5c0;
+  --accent: #8b2035;
+  --accent2: #3a7bd5;
+  --text: #2a2318;
+  --muted: #8a7d6a;
+  --danger: #c0392b;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 16px;
+  padding-bottom: 80px;
+}
+
+/* ---------- HEADER ---------- */
+.app-header {
+  text-align: center;
+  padding: 28px 0 20px;
+}
+.app-header h1 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  color: var(--accent);
+  letter-spacing: -0.01em;
+  font-weight: 800;
+}
+.app-header .subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-top: 5px;
+}
+
+/* ---------- MODE TOGGLE ---------- */
+.mode-bar {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+.mode-bar button {
+  padding: 9px 22px;
+  border-radius: 99px;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mode-bar button.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.mode-bar button:not(.active):hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- TOP ACTIONS ---------- */
+.top-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+.btn-ghost {
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--border);
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: #fdf5f6; }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { opacity: 0.88; }
+.btn-danger { background: #fdecea; color: var(--danger); border: 2px solid #f5c6c2; }
+.btn-danger:hover { background: var(--danger); color: white; border-color: var(--danger); }
+.btn-sm { padding: 6px 11px; font-size: 12px; }
+
+/* ---------- GIORNO ---------- */
+.giorno {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.giorno-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 16px;
+  background: var(--accent);
+  border-bottom: 2px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+}
+.giorno-header .day-name {
+  flex: 1;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.01em;
+}
+.giorno-header .day-name[contenteditable="true"]:focus {
+  outline: none;
+  border-bottom: 1px dashed rgba(255,255,255,0.6);
+}
+.giorno-header .day-total-badge {
+  font-size: 12px;
+  background: rgba(255,255,255,0.25);
+  border: 1px solid rgba(255,255,255,0.4);
+  color: white;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-weight: 600;
+}
+.giorno-header .chevron {
+  color: rgba(255,255,255,0.8);
+  font-size: 13px;
+  transition: transform 0.3s;
+  min-width: 16px;
+}
+.giorno.collapsed .chevron { transform: rotate(-90deg); }
+.giorno.collapsed .giorno-body { display: none; }
+
+.giorno-body { padding: 14px; }
+
+.giorno-body-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+/* ---------- CITTA ---------- */
+.citta {
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.citta-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--surface2);
+  border-bottom: 2px solid var(--border);
+  flex-wrap: wrap;
+}
+.citta-header h3 {
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--accent2);
+  min-width: 100px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.citta-header h3[contenteditable="true"]:focus { outline: none; border-bottom: 1px dashed var(--accent2); }
+.citta-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+@media(max-width:480px) {
+  .citta-actions { width: 100%; }
+  .citta-actions .btn { flex: 1; justify-content: center; }
+}
+
+.citta-body { padding: 10px; }
+
+/* ---------- ATTIVITA ---------- */
+.attivita-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+.attivita-item {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--accent);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: box-shadow 0.2s, opacity 0.25s;
+}
+.attivita-item:hover { box-shadow: 0 3px 12px rgba(232,98,42,0.1); }
+
+/* --- CHECK STATE --- */
+.attivita-item.skipped {
+  opacity: 0.4;
+}
+.sotto-item.skipped {
+  opacity: 0.4;
+}
+
+/* --- CHECK BUTTON --- */
+.check-toggle {
+  display: none; /* hidden by default, shown in view mode */
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--surface2);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  font-size: 13px;
+  color: var(--muted);
+  user-select: none;
+}
+.check-toggle:hover {
+  border-color: var(--accent);
+  background: #fdf5f6;
+}
+.check-toggle.checked {
+  background: #e8f5e9;
+  border-color: #66bb6a;
+  color: #388e3c;
+}
+
+/* Inline check in att-row */
+.att-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+.att-row .time-block { width: auto; flex-shrink: 0; }
+.price-block {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  align-self: flex-end;
+}
+@media (min-width: 600px) {
+  .att-row { flex-direction: row; flex-wrap: wrap; align-items: center; }
+  .att-name { flex: 1; width: auto; }
+  .price-block { align-self: center; }
+}
+
+.time-block {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  width: 100%;
+}
+.time-block input[type="time"] {
+  background: #fdf5f6;
+  border: 2px solid #e8c0c6;
+  color: var(--accent);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  width: 115px;
+  min-width: 115px;
+  flex-shrink: 0;
+}
+.time-block input[type="time"]:focus { outline: none; border-color: var(--accent); }
+
+.att-name {
+  width: 100%;
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 11px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 0;
+  box-sizing: border-box;
+  resize: none;
+  overflow: hidden;
+  line-height: 1.4;
+}
+.att-name:focus { outline: none; border-color: var(--accent2); background: white; }
+
+.price-block input[type="number"] {
+  width: 70px;
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+.price-block input[type="number"]:focus { outline: none; border-color: var(--accent); }
+
+.att-notes {
+  width: 100%;
+  background: #fffef5;
+  border: 2px dashed var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 8px 11px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  resize: vertical;
+  min-height: 38px;
+}
+.att-notes:focus { outline: none; border-color: var(--accent2); border-style: solid; color: var(--text); }
+
+/* ---------- LINKS SECTION ---------- */
+.links-section { display: flex; flex-direction: column; gap: 6px; }
+.link-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 5px 0;
+  border-bottom: 1px dashed var(--border);
+}
+.link-row:last-of-type { border-bottom: none; }
+.link-row input[type="text"] {
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+}
+.link-row .link-label { width: 100px; min-width: 80px; }
+.link-row .link-url { flex: 1; min-width: 160px; }
+.link-row input:focus { outline: none; border-color: var(--accent2); }
+.btn-icon {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+.btn-icon:hover { color: var(--danger); }
+
+/* ---------- SOTTO-ATTIVITA ---------- */
+.sotto-lista { display: flex; flex-direction: column; gap: 6px; }
+.sotto-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  border-left: 3px solid var(--accent2);
+  border-radius: 8px;
+  padding: 7px 10px;
+  transition: opacity 0.25s;
+}
+.sotto-item-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: space-between;
+}
+.sotto-nome {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  min-width: 0;
+  word-break: break-word;
+  white-space: normal;
+  resize: none;
+  overflow: hidden;
+  line-height: 1.4;
+}
+.sotto-nome:focus { outline: none; }
+.sotto-prezzo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.sotto-prezzo input[type="number"] {
+  width: 60px;
+  background: white;
+  border: 2px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  text-align: right;
+  font-weight: 600;
+}
+.sotto-prezzo input:focus { outline: none; border-color: var(--accent); }
+
+/* ---------- MOVE CONTROLS ---------- */
+.move-controls { display: flex; gap: 4px; }
+.move-controls button {
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.move-controls button:hover { border-color: var(--accent); color: var(--accent); background: #fdf5f6; }
+
+/* ---------- SELECT SPOSTA ---------- */
+select.sposta-select {
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+}
+select.sposta-select:focus { outline: none; border-color: var(--accent2); }
+
+/* ---------- SUBTOTAL ---------- */
+.giorno-subtotal {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 2px solid var(--border);
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.giorno-subtotal .amount {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 15px;
+}
+
+/* ---------- TOTAL BAR ---------- */
+.total-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--surface);
+  border-top: 3px solid var(--accent);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+}
+.total-bar .label {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.total-bar .total-amount {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+/* ---------- SHOW/HIDE EDIT vs VIEW ---------- */
+.edit-only { display: flex; }
+.view-only { display: none; }
+
+/* ---------- VIEW MODE ---------- */
+body.view-mode .edit-only { display: none !important; }
+body.view-mode .view-only { display: block; }
+body.view-mode .att-name,
+body.view-mode .att-notes,
+body.view-mode input[type="time"],
+body.view-mode input[type="number"],
+body.view-mode input[type="text"],
+body.view-mode select,
+body.view-mode [contenteditable] {
+  pointer-events: none;
+  border-color: transparent;
+  background: transparent;
+}
+body.view-mode [contenteditable] { cursor: default; }
+body.view-mode .btn.edit-only { display: none !important; }
+body.view-mode .move-controls { display: none; }
+body.view-mode .sposta-select { display: none; }
+body.view-mode .giorno-body-actions { display: none; }
+body.view-mode .citta-actions .btn:not(.view-btn) { display: none !important; }
+body.view-mode .sotto-item .btn-icon { display: none; }
+body.view-mode .attivita-item .att-controls { display: none; }
+body.view-mode .links-section .btn { display: none; }
+body.view-mode .sotto-prezzo input { pointer-events: none; border-color: transparent; background: transparent; }
+body.view-mode .section-label { display: none; }
+body.view-mode .link-url { display: none; }
+body.view-mode .link-label { display: none; }
+body.view-mode .attivita-item { border-left-color: var(--accent); }
+body.view-mode .time-block input { color: var(--accent); font-weight: 700; }
+.time-view {
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+/* Show check toggles in view mode */
+body.view-mode .check-toggle { display: flex; }
+/* In view mode: first line = check + time + price, second line = name */
+body.view-mode .att-row {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+}
+body.view-mode .att-row .name-view {
+  width: 100%;
+  flex-basis: 100%;
+  min-width: 0;
+  order: 10;
+}
+body.view-mode .att-row .price-block {
+  margin-left: auto;
+}
+body.view-mode .sotto-item-row .check-toggle { display: flex; }
+
+/* View-mode link badges */
+.link-view-badge { display: none; }
+body.view-mode .link-view-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #eef4ff;
+  border: 2px solid #c0d8f8;
+  color: var(--accent2);
+  text-decoration: none;
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+body.view-mode .link-view-badge:hover { background: var(--accent2); color: white; border-color: var(--accent2); }
+body.view-mode .link-row { padding: 4px 0; border-bottom: 1px dashed var(--border); }
+body.view-mode .links-container .link-row:last-child { border-bottom: none; }
+
+body.view-mode .att-notes { display: none; }
+
+.note-view {
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+  padding: 4px 2px;
+  white-space: pre-wrap;
+}
+
+.sotto-nome-view {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.4;
+  word-break: break-word;
+  width: 100%;
+}
+
+/* ---------- UTILITY ---------- */
+.section-label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.att-controls {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-top: 6px;
+  border-top: 2px dashed var(--border);
+}
+.name-view {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  flex: 1;
+}
+
+/* ---------- UTILITY ---------- */
+.separator { height: 1px; background: var(--border); margin: 6px 0; }
+
+/* att-controls: bottom row of each activity */
+.att-controls {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+/* ===== MAPPA PER CITTÀ ===== */
+.citta-map-wrap {
+  margin: 10px 10px 4px 10px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2px solid var(--border);
+}
+.citta-map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 12px;
+  background: var(--accent2);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex-wrap: wrap;
+}
+.citta-map-header a.map-open-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  text-decoration: none;
+  border-radius: 99px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+.citta-map-header a.map-open-btn:hover { background: rgba(255,255,255,0.35); }
+.citta-map-el {
+  width: 100%;
+  height: 240px;
+  display: block;
+  background: var(--surface2);
+}
+@media (max-width: 480px) { .citta-map-el { height: 200px; } }
+.citta-map-status {
+  font-size: 11px;
+  color: var(--muted);
+  padding: 4px 12px 6px;
+  background: var(--surface2);
+  text-align: center;
+}
+.map-num-icon {
+  background: var(--accent);
+  color: white;
+  border: 2px solid white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  font-family: 'DM Sans', sans-serif;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+</style>
+<style type="text/css" id="operaUserStyle"></style></head>
+<body class="">
+
+<div class="app-header">
+  <h1>Itinerario</h1>
+</div>
+
+<div class="mode-bar">
+  <button id="viewBtn" class="" onclick="switchToView()">🔍 Visualizza</button>
+  <button id="editBtn" onclick="switchToEdit()" class="active">✏️ Modifica</button>
+</div>
+
+<div class="top-actions edit-only" id="topActions" style="display: flex;">
+  <button class="btn btn-ghost btn-sm" onclick="aggiungiGiorno()">➕ Aggiungi giorno</button>
+  <button class="btn btn-ghost btn-sm" onclick="copiaItinerario()">📋 Copia itinerario</button>
+  <button class="btn btn-ghost btn-sm" onclick="salvaFile()">💾 Scarica HTML</button>
+</div>
+<div class="top-actions view-only" style="display: none;">
+  <button class="btn btn-ghost btn-sm" onclick="copiaItinerario()">📋 Copia itinerario</button>
+  <button class="btn btn-ghost btn-sm" onclick="salvaFile()">💾 Scarica HTML</button>
+</div>
+
+<div id="contenitore"><div class="giorno collapsed" data-gi="0">
+    <div class="giorno-header" onclick="toggleGiorno(this)">
+      <span class="day-name" contenteditable="true" onclick="event.stopPropagation()" onblur="aggiornaSelect()">8 Aprile — Mercoledì</span>
+      <span class="day-total-badge"><span class="day-total">4</span> €</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="giorno-body">
+      <div class="giorno-body-actions edit-only">
+        <button class="btn btn-ghost btn-sm" onclick="aggiungiCitta(this)">➕ Città</button>
+        <button class="btn btn-danger btn-sm" onclick="rimuoviGiorno(this)">🗑 Rimuovi giorno</button>
+      </div>
+      <div class="giorno-cities"><div class="citta">
+    <div class="citta-header">
+      <h3 contenteditable="true">LOVANIO</h3>
+      <div class="citta-actions">
+        <div class="move-controls edit-only">
+          <button onclick="su(this,'.citta')">▲</button>
+          <button onclick="giu(this,'.citta')">▼</button>
+        </div>
+        <button class="btn btn-ghost btn-sm edit-only" onclick="aggiungiAttivita(this)">➕ Attività</button>
+        <button class="btn btn-danger btn-sm edit-only" onclick="rimuoviCitta(this)">🗑</button>
+        <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
+      </div>
+    </div>
+    <div class="citta-body">
+      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block">
+      <input type="time" value="06:10" onblur="calcola()" style="">
+      <span>→</span>
+      <input type="time" value="07:40" onblur="calcola()" style="">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Volo</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Spesa per il giorno dopo</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Visita a Lovanio (Non so dove spero che almeno qui mi guidi tu)</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Train+</textarea>
+    <div class="price-block">
+      <input type="number" value="4" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li></ul>
+    </div>
+  </div></div>
+      <div class="giorno-subtotal">
+        <span class="label">Totale giorno</span>
+        <span class="amount day-total2">4</span><span style="color:var(--muted);font-size:13px"> €</span>
+      </div>
+    </div>
+  </div><div class="giorno collapsed" data-gi="1">
+    <div class="giorno-header" onclick="toggleGiorno(this)">
+      <span class="day-name" contenteditable="true" onclick="event.stopPropagation()" onblur="aggiornaSelect()">9 Aprile — Giovedì</span>
+      <span class="day-total-badge"><span class="day-total">12</span> €</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="giorno-body">
+      <div class="giorno-body-actions edit-only">
+        <button class="btn btn-ghost btn-sm" onclick="aggiungiCitta(this)">➕ Città</button>
+        <button class="btn btn-danger btn-sm" onclick="rimuoviGiorno(this)">🗑 Rimuovi giorno</button>
+      </div>
+      <div class="giorno-cities"><div class="citta">
+    <div class="citta-header">
+      <h3 contenteditable="true">LUSSEMBURGO</h3>
+      <div class="citta-actions">
+        <div class="move-controls edit-only">
+          <button onclick="su(this,'.citta')">▲</button>
+          <button onclick="giu(this,'.citta')">▼</button>
+        </div>
+        <button class="btn btn-ghost btn-sm edit-only" onclick="aggiungiAttivita(this)">➕ Attività</button>
+        <button class="btn btn-danger btn-sm edit-only" onclick="rimuoviCitta(this)">🗑</button>
+        <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
+      </div>
+    </div>
+    <div class="citta-body">
+      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block">
+      <input type="time" value="06:25" onblur="calcola()" style="">
+      <span>→</span>
+      <input type="time" value="09:14" onblur="calcola()" style="">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Treno Lovanio → Ettelsbruck</textarea>
+    <div class="price-block">
+      <input type="number" value="6" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Treno ">
+    <input type="text" class="link-url" placeholder="https://…" value="https://www.omio.it/app/search-frontend/journey/train/1037749991/L0AFBE0BB2EE54A9099B6EF96B3D0DF25/7062379699234548802?locale=it">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://www.omio.it/app/search-frontend/journey/train/1037749991/L0AFBE0BB2EE54A9099B6EF96B3D0DF25/7062379699234548802?locale=it" target="_blank">Treno </a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block">
+      <input type="time" value="09:18" onblur="calcola()" style="">
+      <span>→</span>
+      <input type="time" value="10:14" onblur="calcola()" style="">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Bus Ettelsbruck → Mullerthal (Trail W7)</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block">
+      <input type="time" value="10:30" onblur="calcola()" style="">
+      <span>→</span>
+      <input type="time" value="15:30" onblur="calcola()" style="">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Trail W7</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Trail W7">
+    <input type="text" class="link-url" placeholder="https://…" value="https://www.mullerthal-trail.lu/en/fiche/walking/local-hiking-trail-w7">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://www.mullerthal-trail.lu/en/fiche/walking/local-hiking-trail-w7" target="_blank">Trail W7</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block">
+      <input type="time" value="16:00" onblur="calcola()" style="">
+      <span>→</span>
+      <input type="time" value="17:00" onblur="calcola()" style="">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Bus Mullerthal → Lussemburgo</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block">
+      <input type="time" value="17:05" onblur="calcola()" style="">
+      <span>→</span>
+      <input type="time" value="19:45" onblur="calcola()" style="">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Visita a Lussemburgo</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Mappa con i luoghi da visitare">
+    <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/uf4qfvKXLaC2i7jV8">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/uf4qfvKXLaC2i7jV8" target="_blank">Mappa con i luoghi da visitare</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item">
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Quartiere Grund</textarea>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+      <div class="sotto-prezzo">
+        <input type="number" value="0" min="0" onchange="calcola()"> €
+      </div>
+      <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
+    </div>
+  </div><div class="sotto-item">
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Chem de la Cornice</textarea>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+      <div class="sotto-prezzo">
+        <input type="number" value="0" min="0" onchange="calcola()"> €
+      </div>
+      <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
+    </div>
+  </div><div class="sotto-item">
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Cattedrale di Notre-Dame</textarea>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+      <div class="sotto-prezzo">
+        <input type="number" value="0" min="0" onchange="calcola()"> €
+      </div>
+      <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
+    </div>
+  </div><div class="sotto-item">
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Palazzo Granducale di Lussemburgo</textarea>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+      <div class="sotto-prezzo">
+        <input type="number" value="0" min="0" onchange="calcola()"> €
+      </div>
+      <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
+    </div>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block">
+      <input type="time" value="19:45" onblur="calcola()" style="">
+      <span>→</span>
+      <input type="time" value="23:00" onblur="calcola()" style="">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Treno Lussemburgo → Lovanio</textarea>
+    <div class="price-block">
+      <input type="number" value="6" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Treno">
+    <input type="text" class="link-url" placeholder="https://…" value="https://www.omio.it/app/search-frontend/journey/train/-340265616/L0B4FAEDA87654EA197C1BB624D5B66F2/-1336624402273286888?locale=it">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://www.omio.it/app/search-frontend/journey/train/-340265616/L0B4FAEDA87654EA197C1BB624D5B66F2/-1336624402273286888?locale=it" target="_blank">Treno</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li></ul>
+    </div>
+  </div></div>
+      <div class="giorno-subtotal">
+        <span class="label">Totale giorno</span>
+        <span class="amount day-total2">12</span><span style="color:var(--muted);font-size:13px"> €</span>
+      </div>
+    </div>
+  </div><div class="giorno collapsed" data-gi="2">
+    <div class="giorno-header" onclick="toggleGiorno(this)">
+      <span class="day-name" contenteditable="true" onclick="event.stopPropagation()" onblur="aggiornaSelect()">10 Aprile — Venerdì</span>
+      <span class="day-total-badge"><span class="day-total">33.3</span> €</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="giorno-body">
+      <div class="giorno-body-actions edit-only">
+        <button class="btn btn-ghost btn-sm" onclick="aggiungiCitta(this)">➕ Città</button>
+        <button class="btn btn-danger btn-sm" onclick="rimuoviGiorno(this)">🗑 Rimuovi giorno</button>
+      </div>
+      <div class="giorno-cities"><div class="citta">
+    <div class="citta-header">
+      <h3 contenteditable="true">ANVERSA</h3>
+      <div class="citta-actions">
+        <div class="move-controls edit-only">
+          <button onclick="su(this,'.citta')">▲</button>
+          <button onclick="giu(this,'.citta')">▼</button>
+        </div>
+        <button class="btn btn-ghost btn-sm edit-only" onclick="aggiungiAttivita(this)">➕ Attività</button>
+        <button class="btn btn-danger btn-sm edit-only" onclick="rimuoviCitta(this)">🗑</button>
+        <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
+      </div>
+    </div>
+    <div class="citta-body">
+      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block">
+      <input type="time" value="09:03" onblur="calcola()" style="">
+      <span>→</span>
+      <input type="time" value="10:05" onblur="calcola()" style="">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Treno Lovanio -&gt; Anversa Centrale</textarea>
+    <div class="price-block">
+      <input type="number" value="3.4" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmVN2ov/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmVN2ov/" target="_blank">Video</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item">
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Visitiamo la stazione (dai video sembra bella)</textarea>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+      <div class="sotto-prezzo">
+        <input type="number" value="0" min="0" onchange="calcola()"> €
+      </div>
+      <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
+    </div>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Van Wesenbekestraat (Chinatown)</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRm4t6MB/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRm4t6MB/" target="_blank">Video</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Chocolate Nation</textarea>
+    <div class="price-block">
+      <input type="number" value="18.5" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmVB2ME/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmVB2ME/" target="_blank">Video</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
+    <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/FikyKvyyVxR7FNgm7">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/FikyKvyyVxR7FNgm7" target="_blank">Maps</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Zoo di Anversa</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmV9tpD/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmV9tpD/" target="_blank">Video</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
+    <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/B8Ug8cC2cSEcnrTR6">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/B8Ug8cC2cSEcnrTR6" target="_blank">Maps</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item skipped">
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Visita allo Zoo</textarea>
+    <div class="sotto-item-row"><button class="check-toggle" title="Includi / escludi" style="display: none;">○</button>
+      <div class="sotto-prezzo">
+        <input type="number" value="34.5" min="0" onchange="calcola()"> €
+      </div>
+      <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
+    </div>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Passeggiata a Meir</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video Meir">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmV9npe/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmV9npe/" target="_blank">Video Meir</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video Stadsfeestzaal ">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmVhS1M/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmVhS1M/" target="_blank">Video Stadsfeestzaal </a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item">
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Stadsfeestzaal (Negozi) </textarea>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+      <div class="sotto-prezzo">
+        <input type="number" value="0" min="0" onchange="calcola()"> €
+      </div>
+      <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
+    </div>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Cattedrale di Anversa e Grote Markt </textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Cattedrale">
+    <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/DFHgHeZjUmggezbNA">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/DFHgHeZjUmggezbNA" target="_blank">Cattedrale</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Vlaaikensgang ">
+    <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/JombViLDLETDmfrN6">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/JombViLDLETDmfrN6" target="_blank">Vlaaikensgang </a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item">
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Passaggio di Vlaaikensgang (Si trova vicino alla cattedrale, un po' nascosto)</textarea>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+      <div class="sotto-prezzo">
+        <input type="number" value="0" min="0" onchange="calcola()"> €
+      </div>
+      <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
+    </div>
+  </div><div class="sotto-item skipped">
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Ingresso nella Cattedrale</textarea>
+    <div class="sotto-item-row"><button class="check-toggle" title="Includi / escludi" style="display: none;">○</button>
+      <div class="sotto-prezzo">
+        <input type="number" value="10" min="0" onchange="calcola()"> €
+      </div>
+      <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
+    </div>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Het Steen Castle</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmVubbP/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmVubbP/" target="_blank">Video</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
+    <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/8qwSJbRfXSXY8oEn9">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/8qwSJbRfXSXY8oEn9" target="_blank">Maps</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Eilandje (Quartiere)</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video Eilandje">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmVPSSy/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmVPSSy/" target="_blank">Video Eilandje</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video MAS">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmVrwYa/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmVrwYa/" target="_blank">Video MAS</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item">
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">MAS Museum (L'ingresso alla terrazza è gratis)</textarea>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+      <div class="sotto-prezzo">
+        <input type="number" value="8" min="0" onchange="calcola()"> €
+      </div>
+      <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
+    </div>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Boekenbergpark</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmV1SxC/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmV1SxC/" target="_blank">Video</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
+    <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/zZuRKkPZyJo1vQ7f7">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/zZuRKkPZyJo1vQ7f7" target="_blank">Maps</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Treno Anversa -&gt; Lovanio</textarea>
+    <div class="price-block">
+      <input type="number" value="3.4" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li></ul>
+    </div>
+  </div></div>
+      <div class="giorno-subtotal">
+        <span class="label">Totale giorno</span>
+        <span class="amount day-total2">33.3</span><span style="color:var(--muted);font-size:13px"> €</span>
+      </div>
+    </div>
+  </div><div class="giorno" data-gi="3">
+    <div class="giorno-header" onclick="toggleGiorno(this)">
+      <span class="day-name" contenteditable="true" onclick="event.stopPropagation()" onblur="aggiornaSelect()">11 Aprile — Sabato</span>
+      <span class="day-total-badge"><span class="day-total">26.2</span> €</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="giorno-body">
+      <div class="giorno-body-actions edit-only">
+        <button class="btn btn-ghost btn-sm" onclick="aggiungiCitta(this)">➕ Città</button>
+        <button class="btn btn-danger btn-sm" onclick="rimuoviGiorno(this)">🗑 Rimuovi giorno</button>
+      </div>
+      <div class="giorno-cities"><div class="citta">
+    <div class="citta-header">
+      <h3 contenteditable="true">LOVANIO</h3>
+      <div class="citta-actions">
+        <div class="move-controls edit-only">
+          <button onclick="su(this,'.citta')">▲</button>
+          <button onclick="giu(this,'.citta')">▼</button>
+        </div>
+        <button class="btn btn-ghost btn-sm edit-only" onclick="aggiungiAttivita(this)">➕ Attività</button>
+        <button class="btn btn-danger btn-sm edit-only" onclick="rimuoviCitta(this)">🗑</button>
+        <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
+      </div>
+    </div>
+    <div class="citta-body">
+      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Preparazione per il giorno dopo (Se dobbiamo comprare qualcosa)</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li></ul>
+    </div>
+  </div><div class="citta">
+    <div class="citta-header">
+      <h3 contenteditable="true">BRUXELLES</h3>
+      <div class="citta-actions">
+        <div class="move-controls edit-only">
+          <button onclick="su(this,'.citta')">▲</button>
+          <button onclick="giu(this,'.citta')">▼</button>
+        </div>
+        <button class="btn btn-ghost btn-sm edit-only" onclick="aggiungiAttivita(this)">➕ Attività</button>
+        <button class="btn btn-danger btn-sm edit-only" onclick="rimuoviCitta(this)">🗑</button>
+        <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
+      </div>
+    </div>
+    <div class="citta-body">
+      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Treno Lovanio -&gt; Bruxelels</textarea>
+    <div class="price-block">
+      <input type="number" value="4.1" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi">✓</button>
+    <div class="time-block">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 36px;">Nuova attività</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="">
+    <input type="text" class="link-url" placeholder="https://…" value="">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/iNHrphigo4iQ6TQA6" target="_blank">Maps</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Galeries Royales Saint Hubert</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
+    <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/KP4FSs4udET77ZNd9">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/KP4FSs4udET77ZNd9" target="_blank">Maps</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRm7FVAc/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRm7FVAc/" target="_blank">Video</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Grand Place</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
+    <input type="text" class="link-url" placeholder="https://…" value="Grand Place">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="Grand Place" target="_blank">Maps</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi">✓</button>
+    <div class="time-block">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 36px;">Nuova attività</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="">
+    <input type="text" class="link-url" placeholder="https://…" value="">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/Liqgrh4GLb7tt1J57" target="_blank">Maps</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Mont des Arts</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
+    <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/BqR9SWu5TSBw5rhV6">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/BqR9SWu5TSBw5rhV6" target="_blank">Maps</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmW5Qq8/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmW5Qq8/" target="_blank">Video</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Museo Magritte</textarea>
+    <div class="price-block">
+      <input type="number" value="5" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Biglietti">
+    <input type="text" class="link-url" placeholder="https://…" value="https://musee-magritte-museum.be/en/your-visit/practical-info-rmfab/admission">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://musee-magritte-museum.be/en/your-visit/practical-info-rmfab/admission" target="_blank">Biglietti</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
+    <input type="text" class="link-url" placeholder="https://…" value="https://musee-magritte-museum.be/en/your-visit/practical-info-rmfab/admission">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://musee-magritte-museum.be/en/your-visit/practical-info-rmfab/admission" target="_blank">Maps</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Video">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmWxyE8/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmWxyE8/" target="_blank">Video</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Palazzo Reale</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="Maps">
+    <input type="text" class="link-url" placeholder="https://…" value="https://maps.app.goo.gl/j2c9cttoMds4ScxL9">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/j2c9cttoMds4ScxL9" target="_blank">Maps</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item">
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 18px;"></textarea>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+      <div class="sotto-prezzo">
+        <input type="number" value="0" min="0" onchange="calcola()"> €
+      </div>
+      <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
+    </div>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi">✓</button>
+    <div class="time-block">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 36px;">Nuova attività</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="">
+    <input type="text" class="link-url" placeholder="https://…" value="">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/mwR2r1kqHTVZnvgK6" target="_blank">Maps</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="">
+    <input type="text" class="link-url" placeholder="https://…" value="">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRm7usrS/" target="_blank">Video</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi">✓</button>
+    <div class="time-block">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 36px;">Nuova attività</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…"></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="">
+    <input type="text" class="link-url" placeholder="https://…" value="">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://maps.app.goo.gl/Dm3G8D3DS76fyDZS7" target="_blank">Maps</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="">
+    <input type="text" class="link-url" placeholder="https://…" value="">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRm72h4u/" target="_blank">Video Parc du Cinquantenaire</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="">
+    <input type="text" class="link-url" placeholder="https://…" value="">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmWcCJx/" target="_blank">Video Autoworld</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap"><div class="section-label">Sotto-attività</div><div class="sotto-lista"><div class="sotto-item">
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="height: 18px;"></textarea>
+    <div class="sotto-item-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+      <div class="sotto-prezzo">
+        <input type="number" value="0" min="0" onchange="calcola()"> €
+      </div>
+      <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
+    </div>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Treno Bruxelles -&gt; Lovanio</textarea>
+    <div class="price-block">
+      <input type="number" value="4.1" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Posti carini dove mangiare</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section"><div class="section-label">Link</div><div class="links-container"><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmWJEyN/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmWJEyN/" target="_blank">Link</a>
+  </div><div class="link-row">
+    <input type="text" class="link-label" placeholder="Etichetta" value="">
+    <input type="text" class="link-url" placeholder="https://…" value="https://vm.tiktok.com/ZNRmWRtQS/">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="https://vm.tiktok.com/ZNRmWRtQS/" target="_blank">Link</a>
+  </div></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li></ul>
+    </div>
+  </div></div>
+      <div class="giorno-subtotal">
+        <span class="label">Totale giorno</span>
+        <span class="amount day-total2">26.2</span><span style="color:var(--muted);font-size:13px"> €</span>
+      </div>
+    </div>
+  </div><div class="giorno" data-gi="4">
+    <div class="giorno-header" onclick="toggleGiorno(this)">
+      <span class="day-name" contenteditable="true" onclick="event.stopPropagation()" onblur="aggiornaSelect()">12 Aprile — Domenica</span>
+      <span class="day-total-badge"><span class="day-total">0</span> €</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="giorno-body">
+      <div class="giorno-body-actions edit-only">
+        <button class="btn btn-ghost btn-sm" onclick="aggiungiCitta(this)">➕ Città</button>
+        <button class="btn btn-danger btn-sm" onclick="rimuoviGiorno(this)">🗑 Rimuovi giorno</button>
+      </div>
+      <div class="giorno-cities"><div class="citta">
+    <div class="citta-header">
+      <h3 contenteditable="true">AMSTERDAM 1</h3>
+      <div class="citta-actions">
+        <div class="move-controls edit-only">
+          <button onclick="su(this,'.citta')">▲</button>
+          <button onclick="giu(this,'.citta')">▼</button>
+        </div>
+        <button class="btn btn-ghost btn-sm edit-only" onclick="aggiungiAttivita(this)">➕ Attività</button>
+        <button class="btn btn-danger btn-sm edit-only" onclick="rimuoviCitta(this)">🗑</button>
+        <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
+      </div>
+    </div>
+    <div class="citta-body">
+      <ul class="attivita-list"></ul>
+    </div>
+  </div></div>
+      <div class="giorno-subtotal">
+        <span class="label">Totale giorno</span>
+        <span class="amount day-total2">0</span><span style="color:var(--muted);font-size:13px"> €</span>
+      </div>
+    </div>
+  </div><div class="giorno" data-gi="5">
+    <div class="giorno-header" onclick="toggleGiorno(this)">
+      <span class="day-name" contenteditable="true" onclick="event.stopPropagation()" onblur="aggiornaSelect()">13 Aprile — Lunedì</span>
+      <span class="day-total-badge"><span class="day-total">0</span> €</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="giorno-body">
+      <div class="giorno-body-actions edit-only">
+        <button class="btn btn-ghost btn-sm" onclick="aggiungiCitta(this)">➕ Città</button>
+        <button class="btn btn-danger btn-sm" onclick="rimuoviGiorno(this)">🗑 Rimuovi giorno</button>
+      </div>
+      <div class="giorno-cities"><div class="citta">
+    <div class="citta-header">
+      <h3 contenteditable="true">AMSTERDAM 2</h3>
+      <div class="citta-actions">
+        <div class="move-controls edit-only">
+          <button onclick="su(this,'.citta')">▲</button>
+          <button onclick="giu(this,'.citta')">▼</button>
+        </div>
+        <button class="btn btn-ghost btn-sm edit-only" onclick="aggiungiAttivita(this)">➕ Attività</button>
+        <button class="btn btn-danger btn-sm edit-only" onclick="rimuoviCitta(this)">🗑</button>
+        <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
+      </div>
+    </div>
+    <div class="citta-body">
+      <ul class="attivita-list"></ul>
+    </div>
+  </div></div>
+      <div class="giorno-subtotal">
+        <span class="label">Totale giorno</span>
+        <span class="amount day-total2">0</span><span style="color:var(--muted);font-size:13px"> €</span>
+      </div>
+    </div>
+  </div><div class="giorno" data-gi="6">
+    <div class="giorno-header" onclick="toggleGiorno(this)">
+      <span class="day-name" contenteditable="true" onclick="event.stopPropagation()" onblur="aggiornaSelect()">14 Aprile — Martedì</span>
+      <span class="day-total-badge"><span class="day-total">0</span> €</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="giorno-body">
+      <div class="giorno-body-actions edit-only">
+        <button class="btn btn-ghost btn-sm" onclick="aggiungiCitta(this)">➕ Città</button>
+        <button class="btn btn-danger btn-sm" onclick="rimuoviGiorno(this)">🗑 Rimuovi giorno</button>
+      </div>
+      <div class="giorno-cities"><div class="citta">
+    <div class="citta-header">
+      <h3 contenteditable="true">AMSTERDAM 3</h3>
+      <div class="citta-actions">
+        <div class="move-controls edit-only">
+          <button onclick="su(this,'.citta')">▲</button>
+          <button onclick="giu(this,'.citta')">▼</button>
+        </div>
+        <button class="btn btn-ghost btn-sm edit-only" onclick="aggiungiAttivita(this)">➕ Attività</button>
+        <button class="btn btn-danger btn-sm edit-only" onclick="rimuoviCitta(this)">🗑</button>
+        <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
+      </div>
+    </div>
+    <div class="citta-body">
+      <ul class="attivita-list"></ul>
+    </div>
+  </div></div>
+      <div class="giorno-subtotal">
+        <span class="label">Totale giorno</span>
+        <span class="amount day-total2">0</span><span style="color:var(--muted);font-size:13px"> €</span>
+      </div>
+    </div>
+  </div><div class="giorno" data-gi="7">
+    <div class="giorno-header" onclick="toggleGiorno(this)">
+      <span class="day-name" contenteditable="true" onclick="event.stopPropagation()" onblur="aggiornaSelect()">15 Aprile — Mercoledì</span>
+      <span class="day-total-badge"><span class="day-total">0</span> €</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="giorno-body">
+      <div class="giorno-body-actions edit-only">
+        <button class="btn btn-ghost btn-sm" onclick="aggiungiCitta(this)">➕ Città</button>
+        <button class="btn btn-danger btn-sm" onclick="rimuoviGiorno(this)">🗑 Rimuovi giorno</button>
+      </div>
+      <div class="giorno-cities"><div class="citta">
+    <div class="citta-header">
+      <h3 contenteditable="true">LOVANIO</h3>
+      <div class="citta-actions">
+        <div class="move-controls edit-only">
+          <button onclick="su(this,'.citta')">▲</button>
+          <button onclick="giu(this,'.citta')">▼</button>
+        </div>
+        <button class="btn btn-ghost btn-sm edit-only" onclick="aggiungiAttivita(this)">➕ Attività</button>
+        <button class="btn btn-danger btn-sm edit-only" onclick="rimuoviCitta(this)">🗑</button>
+        <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
+      </div>
+    </div>
+    <div class="citta-body">
+      <ul class="attivita-list"></ul>
+    </div>
+  </div></div>
+      <div class="giorno-subtotal">
+        <span class="label">Totale giorno</span>
+        <span class="amount day-total2">0</span><span style="color:var(--muted);font-size:13px"> €</span>
+      </div>
+    </div>
+  </div><div class="giorno" data-gi="8">
+    <div class="giorno-header" onclick="toggleGiorno(this)">
+      <span class="day-name" contenteditable="true" onclick="event.stopPropagation()" onblur="aggiornaSelect()">16 Aprile — Giovedì</span>
+      <span class="day-total-badge"><span class="day-total">0</span> €</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="giorno-body">
+      <div class="giorno-body-actions edit-only">
+        <button class="btn btn-ghost btn-sm" onclick="aggiungiCitta(this)">➕ Città</button>
+        <button class="btn btn-danger btn-sm" onclick="rimuoviGiorno(this)">🗑 Rimuovi giorno</button>
+      </div>
+      <div class="giorno-cities"><div class="citta">
+    <div class="citta-header">
+      <h3 contenteditable="true">BRUGES</h3>
+      <div class="citta-actions">
+        <div class="move-controls edit-only">
+          <button onclick="su(this,'.citta')">▲</button>
+          <button onclick="giu(this,'.citta')">▼</button>
+        </div>
+        <button class="btn btn-ghost btn-sm edit-only" onclick="aggiungiAttivita(this)">➕ Attività</button>
+        <button class="btn btn-danger btn-sm edit-only" onclick="rimuoviCitta(this)">🗑</button>
+        <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
+      </div>
+    </div>
+    <div class="citta-body">
+      <ul class="attivita-list"></ul>
+    </div>
+  </div></div>
+      <div class="giorno-subtotal">
+        <span class="label">Totale giorno</span>
+        <span class="amount day-total2">0</span><span style="color:var(--muted);font-size:13px"> €</span>
+      </div>
+    </div>
+  </div><div class="giorno" data-gi="9">
+    <div class="giorno-header" onclick="toggleGiorno(this)">
+      <span class="day-name" contenteditable="true" onclick="event.stopPropagation()" onblur="aggiornaSelect()">17 Aprile — Venerdì</span>
+      <span class="day-total-badge"><span class="day-total">0</span> €</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="giorno-body">
+      <div class="giorno-body-actions edit-only">
+        <button class="btn btn-ghost btn-sm" onclick="aggiungiCitta(this)">➕ Città</button>
+        <button class="btn btn-danger btn-sm" onclick="rimuoviGiorno(this)">🗑 Rimuovi giorno</button>
+      </div>
+      <div class="giorno-cities"><div class="citta">
+    <div class="citta-header">
+      <h3 contenteditable="true">GENT</h3>
+      <div class="citta-actions">
+        <div class="move-controls edit-only">
+          <button onclick="su(this,'.citta')">▲</button>
+          <button onclick="giu(this,'.citta')">▼</button>
+        </div>
+        <button class="btn btn-ghost btn-sm edit-only" onclick="aggiungiAttivita(this)">➕ Attività</button>
+        <button class="btn btn-danger btn-sm edit-only" onclick="rimuoviCitta(this)">🗑</button>
+        <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
+      </div>
+    </div>
+    <div class="citta-body">
+      <ul class="attivita-list"></ul>
+    </div>
+  </div></div>
+      <div class="giorno-subtotal">
+        <span class="label">Totale giorno</span>
+        <span class="amount day-total2">0</span><span style="color:var(--muted);font-size:13px"> €</span>
+      </div>
+    </div>
+  </div><div class="giorno" data-gi="10">
+    <div class="giorno-header" onclick="toggleGiorno(this)">
+      <span class="day-name" contenteditable="true" onclick="event.stopPropagation()" onblur="aggiornaSelect()">18 Aprile — Sabato</span>
+      <span class="day-total-badge"><span class="day-total">0</span> €</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="giorno-body">
+      <div class="giorno-body-actions edit-only">
+        <button class="btn btn-ghost btn-sm" onclick="aggiungiCitta(this)">➕ Città</button>
+        <button class="btn btn-danger btn-sm" onclick="rimuoviGiorno(this)">🗑 Rimuovi giorno</button>
+      </div>
+      <div class="giorno-cities"><div class="citta">
+    <div class="citta-header">
+      <h3 contenteditable="true">BRUXELLES</h3>
+      <div class="citta-actions">
+        <div class="move-controls edit-only">
+          <button onclick="su(this,'.citta')">▲</button>
+          <button onclick="giu(this,'.citta')">▼</button>
+        </div>
+        <button class="btn btn-ghost btn-sm edit-only" onclick="aggiungiAttivita(this)">➕ Attività</button>
+        <button class="btn btn-danger btn-sm edit-only" onclick="rimuoviCitta(this)">🗑</button>
+        <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
+      </div>
+    </div>
+    <div class="citta-body">
+      <ul class="attivita-list"></ul>
+    </div>
+  </div><div class="citta">
+    <div class="citta-header">
+      <h3 contenteditable="true">BRUXELLES</h3>
+      <div class="citta-actions">
+        <div class="move-controls edit-only">
+          <button onclick="su(this,'.citta')">▲</button>
+          <button onclick="giu(this,'.citta')">▼</button>
+        </div>
+        <button class="btn btn-ghost btn-sm edit-only" onclick="aggiungiAttivita(this)">➕ Attività</button>
+        <button class="btn btn-danger btn-sm edit-only" onclick="rimuoviCitta(this)">🗑</button>
+        <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)"><option value="">Sposta in giorno…</option><option value="0">8 Aprile — Mercoledì</option><option value="1">9 Aprile — Giovedì</option><option value="2">10 Aprile — Venerdì</option><option value="3">11 Aprile — Sabato</option><option value="4">12 Aprile — Domenica</option><option value="5">13 Aprile — Lunedì</option><option value="6">14 Aprile — Martedì</option><option value="7">15 Aprile — Mercoledì</option><option value="8">16 Aprile — Giovedì</option><option value="9">17 Aprile — Venerdì</option><option value="10">18 Aprile — Sabato</option></select>
+      </div>
+    </div>
+    <div class="citta-body">
+      <ul class="attivita-list"><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Laeken Park</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Atomium</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li><li class="attivita-item"><div class="att-row"><button class="check-toggle checked" title="Includi / escludi" style="display: none;">✓</button>
+    <div class="time-block" style="">
+      <input type="time" value="" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'" style="">Torre Giapponese</textarea>
+    <div class="price-block">
+      <input type="number" value="0" min="0" onchange="calcola()"> €
+    </div>
+  </div><textarea class="att-notes" placeholder="Note…" style=""></textarea><div class="links-section" style=""><div class="section-label">Link</div><div class="links-container"></div><button class="btn btn-ghost btn-sm edit-only">+ Link</button></div><div class="view-links-badges" style="display: flex; gap: 6px; flex-wrap: wrap;"></div><div class="sotto-wrap" style=""><div class="section-label">Sotto-attività</div><div class="sotto-lista"></div><button class="btn btn-ghost btn-sm edit-only">+ Sotto-attività</button></div><div class="att-controls edit-only">
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)"><option value="">Sposta in città…</option><option value="0">LOVANIO</option><option value="1">LUSSEMBURGO</option><option value="2">ANVERSA</option><option value="3">LOVANIO</option><option value="4">BRUXELLES</option><option value="5">AMSTERDAM 1</option><option value="6">AMSTERDAM 2</option><option value="7">AMSTERDAM 3</option><option value="8">LOVANIO</option><option value="9">BRUGES</option><option value="10">GENT</option><option value="11">BRUXELLES</option><option value="12">BRUXELLES</option></select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  </div></li></ul>
+    </div>
+  </div></div>
+      <div class="giorno-subtotal">
+        <span class="label">Totale giorno</span>
+        <span class="amount day-total2">0</span><span style="color:var(--muted);font-size:13px"> €</span>
+      </div>
+    </div>
+  </div></div>
+
+<div class="total-bar">
+  <span class="label">Totale complessivo</span>
+  <span class="total-amount"><span id="totale">75.5</span> €</span>
+</div>
+
+<script>
+// ======== DATA ========
+const initialData = [
+  {
+    "title": "8 Aprile — Mercoledì",
+    "cities": [
+      {
+        "name": "LOVANIO",
+        "activities": [
+          {
+            "start": "06:10",
+            "end": "07:40",
+            "name": "Volo",
+            "notes": "",
+            "price": 0,
+            "links": [],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Spesa per il giorno dopo",
+            "notes": "",
+            "price": 0,
+            "links": [],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Visita a Lovanio (Non so dove spero che almeno qui mi guidi tu)",
+            "notes": "",
+            "price": 0,
+            "links": [],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Train+",
+            "notes": "",
+            "price": 4,
+            "links": [],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          }
+        ]
+      }
+    ],
+    "collapsed": true
+  },
+  {
+    "title": "9 Aprile — Giovedì",
+    "cities": [
+      {
+        "name": "LUSSEMBURGO",
+        "activities": [
+          {
+            "start": "06:25",
+            "end": "09:14",
+            "name": "Treno Lovanio → Ettelsbruck",
+            "notes": "Il prezzo è 6€ con Train+",
+            "price": 6,
+            "links": [
+              {
+                "label": "Treno ",
+                "url": "https://www.omio.it/app/search-frontend/journey/train/1037749991/L0AFBE0BB2EE54A9099B6EF96B3D0DF25/7062379699234548802?locale=it"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "09:18",
+            "end": "10:14",
+            "name": "Bus Ettelsbruck → Mullerthal (Trail W7)",
+            "notes": "09:18 - Walk to Ettelbruck, Gare routière, duration 4 min\n\n09:22 - departure Ettelbruck, Gare routière, Stop 2\n      with Bus 250 to Junglinster, Op der Gare\n09:48 - arrival Larochette, Bleech\n\n09:48 - Walk to Larochette, Bleech, duration 0 min\n\n10:04 - departure Larochette, Bleech\n      with Bus 262 to Echternach, Gare Centre\n10:17 - arrival Mullerthal, Mëllerdall\n\n-----\nTotal duration: 59 min",
+            "price": 0,
+            "links": [],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "10:30",
+            "end": "15:30",
+            "name": "Trail W7",
+            "notes": "Il sito dice che ci si impiega tipo 3 ore per farlo, ma ovviamente ce la prenderemo con calma quindi ho messo 5 ore. Sono 10,2 km",
+            "price": 0,
+            "links": [
+              {
+                "label": "Trail W7",
+                "url": "https://www.mullerthal-trail.lu/en/fiche/walking/local-hiking-trail-w7"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "16:00",
+            "end": "17:00",
+            "name": "Bus Mullerthal → Lussemburgo",
+            "notes": "16:00 - departure Mullerthal, Mëllerdall\n      with Bus 242 to Junglinster, P+R\n16:16 - arrival Junglinster, P+R\n\n16:16 - Walk to Junglinster, P+R, duration 0 min\n\n16:23 - departure Junglinster, P+R\n      with Bus 201 to Limpertsberg, Theater (Bus)\n16:43 - arrival Kirchberg, Gare routière Luxexpo, Stop 5\n\n16:43 - Walk to Kirchberg, Gare routière Luxexpo, duration 3 min\n\n16:51 - departure Kirchberg, Gare routière Luxexpo, Stop 4\n      with Bus 502 to Yutz, AéroPark P&R\n17:01 - arrival Luxembourg, Gare Rocade, Stop 4\n\n-----\nTotal duration: 1 h",
+            "price": 0,
+            "links": [],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "17:05",
+            "end": "19:45",
+            "name": "Visita a Lussemburgo",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "Mappa con i luoghi da visitare",
+                "url": "https://maps.app.goo.gl/uf4qfvKXLaC2i7jV8"
+              }
+            ],
+            "sotto": [
+              {
+                "name": "Quartiere Grund",
+                "price": 0,
+                "skipped": false
+              },
+              {
+                "name": "Chem de la Cornice",
+                "price": 0,
+                "skipped": false
+              },
+              {
+                "name": "Cattedrale di Notre-Dame",
+                "price": 0,
+                "skipped": false
+              },
+              {
+                "name": "Palazzo Granducale di Lussemburgo",
+                "price": 0,
+                "skipped": false
+              }
+            ],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "19:45",
+            "end": "23:00",
+            "name": "Treno Lussemburgo → Lovanio",
+            "notes": "",
+            "price": 6,
+            "links": [
+              {
+                "label": "Treno",
+                "url": "https://www.omio.it/app/search-frontend/journey/train/-340265616/L0B4FAEDA87654EA197C1BB624D5B66F2/-1336624402273286888?locale=it"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          }
+        ]
+      }
+    ],
+    "collapsed": true
+  },
+  {
+    "title": "10 Aprile — Venerdì",
+    "cities": [
+      {
+        "name": "ANVERSA",
+        "activities": [
+          {
+            "start": "09:03",
+            "end": "10:05",
+            "name": "Treno Lovanio -> Anversa Centrale",
+            "notes": "Ho messo un orario a caso ma direi di non partire troppo presto, tanto il treno ci mette poco e di sicuro saremo molto stanchi dal giorno prima, ma se vuoi prendiamo un treno anche prima (o dopo). Il train + dopo le 9 del mattino (o prima delle 6)",
+            "price": 3.4,
+            "links": [
+              {
+                "label": "Video",
+                "url": "https://vm.tiktok.com/ZNRmVN2ov/"
+              }
+            ],
+            "sotto": [
+              {
+                "name": "Visitiamo la stazione (dai video sembra bella)",
+                "price": 0,
+                "skipped": false
+              }
+            ],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Van Wesenbekestraat (Chinatown)",
+            "notes": "Si trova subito davanti alla stazione centrale",
+            "price": 0,
+            "links": [
+              {
+                "label": "Video",
+                "url": "https://vm.tiktok.com/ZNRm4t6MB/"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Chocolate Nation",
+            "notes": "Il prezzo è quello per gli studenti, altrimenti è 19,90€",
+            "price": 18.5,
+            "links": [
+              {
+                "label": "Video",
+                "url": "https://vm.tiktok.com/ZNRmVB2ME/"
+              },
+              {
+                "label": "Maps",
+                "url": "https://maps.app.goo.gl/FikyKvyyVxR7FNgm7"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Zoo di Anversa",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "Video",
+                "url": "https://vm.tiktok.com/ZNRmV9tpD/"
+              },
+              {
+                "label": "Maps",
+                "url": "https://maps.app.goo.gl/B8Ug8cC2cSEcnrTR6"
+              }
+            ],
+            "sotto": [
+              {
+                "name": "Visita allo Zoo",
+                "price": 34.5,
+                "skipped": true
+              }
+            ],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Passeggiata a Meir",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "Video Meir",
+                "url": "https://vm.tiktok.com/ZNRmV9npe/"
+              },
+              {
+                "label": "Video Stadsfeestzaal ",
+                "url": "https://vm.tiktok.com/ZNRmVhS1M/"
+              }
+            ],
+            "sotto": [
+              {
+                "name": "Stadsfeestzaal (Negozi) ",
+                "price": 0,
+                "skipped": false
+              }
+            ],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Cattedrale di Anversa e Grote Markt ",
+            "notes": "Piazza principale + Cattedrale + Municipio",
+            "price": 0,
+            "links": [
+              {
+                "label": "Cattedrale",
+                "url": "https://maps.app.goo.gl/DFHgHeZjUmggezbNA"
+              },
+              {
+                "label": "Vlaaikensgang ",
+                "url": "https://maps.app.goo.gl/JombViLDLETDmfrN6"
+              }
+            ],
+            "sotto": [
+              {
+                "name": "Passaggio di Vlaaikensgang (Si trova vicino alla cattedrale, un po' nascosto)",
+                "price": 0,
+                "skipped": false
+              },
+              {
+                "name": "Ingresso nella Cattedrale",
+                "price": 10,
+                "skipped": true
+              }
+            ],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Het Steen Castle",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "Video",
+                "url": "https://vm.tiktok.com/ZNRmVubbP/"
+              },
+              {
+                "label": "Maps",
+                "url": "https://maps.app.goo.gl/8qwSJbRfXSXY8oEn9"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Eilandje (Quartiere)",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "Video Eilandje",
+                "url": "https://vm.tiktok.com/ZNRmVPSSy/"
+              },
+              {
+                "label": "Video MAS",
+                "url": "https://vm.tiktok.com/ZNRmVrwYa/"
+              }
+            ],
+            "sotto": [
+              {
+                "name": "MAS Museum (L'ingresso alla terrazza è gratis)",
+                "price": 8,
+                "skipped": false
+              }
+            ],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Boekenbergpark",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "Video",
+                "url": "https://vm.tiktok.com/ZNRmV1SxC/"
+              },
+              {
+                "label": "Maps",
+                "url": "https://maps.app.goo.gl/zZuRKkPZyJo1vQ7f7"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Treno Anversa -> Lovanio",
+            "notes": "",
+            "price": 3.4,
+            "links": [],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          }
+        ]
+      }
+    ],
+    "collapsed": true
+  },
+  {
+    "title": "11 Aprile — Sabato",
+    "cities": [
+      {
+        "name": "LOVANIO",
+        "activities": [
+          {
+            "start": "",
+            "end": "",
+            "name": "Preparazione per il giorno dopo (Se dobbiamo comprare qualcosa)",
+            "notes": "",
+            "price": 0,
+            "links": [],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          }
+        ]
+      },
+      {
+        "name": "BRUXELLES",
+        "activities": [
+          {
+            "start": "",
+            "end": "",
+            "name": "Treno Lovanio -> Bruxelels",
+            "notes": "",
+            "price": 4.1,
+            "links": [],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Cathédrale Saints-Michel-et-Gudule",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "Maps",
+                "url": "https://maps.app.goo.gl/iNHrphigo4iQ6TQA6"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Galeries Royales Saint Hubert",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "Maps",
+                "url": "https://maps.app.goo.gl/KP4FSs4udET77ZNd9"
+              },
+              {
+                "label": "Video",
+                "url": "https://vm.tiktok.com/ZNRm7FVAc/"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Grand Place",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "Maps",
+                "url": "Grand Place"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Manneken Pis",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "Maps",
+                "url": "https://maps.app.goo.gl/Liqgrh4GLb7tt1J57"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Mont des Arts",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "Maps",
+                "url": "https://maps.app.goo.gl/BqR9SWu5TSBw5rhV6"
+              },
+              {
+                "label": "Video",
+                "url": "https://vm.tiktok.com/ZNRmW5Qq8/"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Museo Magritte",
+            "notes": "(Il prezzo è con lo sconto studente, è carino ma forse non ne vale troppo la pena per il tempo che ci passiamo, è un po' monotematico)",
+            "price": 5,
+            "links": [
+              {
+                "label": "Biglietti",
+                "url": "https://musee-magritte-museum.be/en/your-visit/practical-info-rmfab/admission"
+              },
+              {
+                "label": "Maps",
+                "url": "https://musee-magritte-museum.be/en/your-visit/practical-info-rmfab/admission"
+              },
+              {
+                "label": "Video",
+                "url": "https://vm.tiktok.com/ZNRmWxyE8/"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Palazzo Reale",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "Maps",
+                "url": "https://maps.app.goo.gl/j2c9cttoMds4ScxL9"
+              }
+            ],
+            "sotto": [
+              {
+                "name": "Parco di Bruxelles",
+                "price": 0,
+                "skipped": false
+              }
+            ],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Institut royal des Sciences naturelles de Belgique",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "Maps",
+                "url": "https://maps.app.goo.gl/mwR2r1kqHTVZnvgK6"
+              },
+              {
+                "label": "Video",
+                "url": "https://vm.tiktok.com/ZNRm7usrS/"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Parc du Cinquantenaire",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "Maps",
+                "url": "https://maps.app.goo.gl/Dm3G8D3DS76fyDZS7"
+              },
+              {
+                "label": "Video Parc du Cinquantenaire",
+                "url": "https://vm.tiktok.com/ZNRm72h4u/"
+              },
+              {
+                "label": "Video Autoworld",
+                "url": "https://vm.tiktok.com/ZNRmWcCJx/"
+              }
+            ],
+            "sotto": [
+              {
+                "name": "Autoworld: Museo con alcune auto, chiude alle 18 e potrebbe annoiarti ahah",
+                "price": 13,
+                "skipped": false
+              }
+            ],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Treno Bruxelles -> Lovanio",
+            "notes": "",
+            "price": 4.1,
+            "links": [],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Posti carini dove mangiare",
+            "notes": "",
+            "price": 0,
+            "links": [
+              {
+                "label": "",
+                "url": "https://vm.tiktok.com/ZNRmWJEyN/"
+              },
+              {
+                "label": "",
+                "url": "https://vm.tiktok.com/ZNRmWRtQS/"
+              }
+            ],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          }
+        ]
+      }
+    ],
+    "collapsed": false
+  },
+  {
+    "title": "12 Aprile — Domenica",
+    "cities": [
+      {
+        "name": "AMSTERDAM 1",
+        "activities": []
+      }
+    ],
+    "collapsed": false
+  },
+  {
+    "title": "13 Aprile — Lunedì",
+    "cities": [
+      {
+        "name": "AMSTERDAM 2",
+        "activities": []
+      }
+    ],
+    "collapsed": false
+  },
+  {
+    "title": "14 Aprile — Martedì",
+    "cities": [
+      {
+        "name": "AMSTERDAM 3",
+        "activities": []
+      }
+    ],
+    "collapsed": false
+  },
+  {
+    "title": "15 Aprile — Mercoledì",
+    "cities": [
+      {
+        "name": "LOVANIO",
+        "activities": []
+      }
+    ],
+    "collapsed": false
+  },
+  {
+    "title": "16 Aprile — Giovedì",
+    "cities": [
+      {
+        "name": "BRUGES",
+        "activities": []
+      }
+    ],
+    "collapsed": false
+  },
+  {
+    "title": "17 Aprile — Venerdì",
+    "cities": [
+      {
+        "name": "GENT",
+        "activities": []
+      }
+    ],
+    "collapsed": false
+  },
+  {
+    "title": "18 Aprile — Sabato",
+    "cities": [
+      {
+        "name": "BRUXELLES",
+        "activities": []
+      },
+      {
+        "name": "BRUXELLES",
+        "activities": [
+          {
+            "start": "",
+            "end": "",
+            "name": "Laeken Park",
+            "notes": "",
+            "price": 0,
+            "links": [],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Atomium",
+            "notes": "",
+            "price": 0,
+            "links": [],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          },
+          {
+            "start": "",
+            "end": "",
+            "name": "Torre Giapponese",
+            "notes": "",
+            "price": 0,
+            "links": [],
+            "sotto": [],
+            "skipped": false,
+            "checked": true
+          }
+        ]
+      }
+    ],
+    "collapsed": false
+  }
+];
+
+// ======== BUILD DOM ========
+function buildAll(data) {
+  const c = document.getElementById('contenitore');
+  c.innerHTML = '';
+  data.forEach((g, gi) => {
+    c.appendChild(buildGiorno(g, gi));
+  });
+  calcola();
+}
+
+function buildGiorno(g, gi) {
+  const el = document.createElement('div');
+  el.className = 'giorno' + (g.collapsed ? ' collapsed' : '');
+  el.dataset.gi = gi;
+
+  el.innerHTML = `
+    <div class="giorno-header" onclick="toggleGiorno(this)">
+      <span class="day-name" contenteditable="true" onclick="event.stopPropagation()" onblur="aggiornaSelect()">${g.title}</span>
+      <span class="day-total-badge"><span class="day-total">0</span> €</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="giorno-body">
+      <div class="giorno-body-actions edit-only">
+        <button class="btn btn-ghost btn-sm" onclick="aggiungiCitta(this)">➕ Città</button>
+        <button class="btn btn-danger btn-sm" onclick="rimuoviGiorno(this)">🗑 Rimuovi giorno</button>
+      </div>
+      <div class="giorno-cities"></div>
+      <div class="giorno-subtotal">
+        <span class="label">Totale giorno</span>
+        <span class="amount day-total2">0</span><span style="color:var(--muted);font-size:13px"> €</span>
+      </div>
+    </div>
+  `;
+
+  const citiesDiv = el.querySelector('.giorno-cities');
+  (g.cities || []).forEach(c => citiesDiv.appendChild(buildCitta(c)));
+
+  return el;
+}
+
+function buildCitta(c) {
+  const el = document.createElement('div');
+  el.className = 'citta';
+  el.innerHTML = `
+    <div class="citta-header">
+      <h3 contenteditable="true">${c.name}</h3>
+      <div class="citta-actions">
+        <div class="move-controls edit-only">
+          <button onclick="su(this,'.citta')">▲</button>
+          <button onclick="giu(this,'.citta')">▼</button>
+        </div>
+        <button class="btn btn-ghost btn-sm edit-only" onclick="aggiungiAttivita(this)">➕ Attività</button>
+        <button class="btn btn-danger btn-sm edit-only" onclick="rimuoviCitta(this)">🗑</button>
+        <select class="sposta-select edit-only" onchange="spostaCittaSelect(this)">
+          <option value="">Sposta in giorno…</option>
+        </select>
+      </div>
+    </div>
+    <div class="citta-body">
+      <ul class="attivita-list"></ul>
+    </div>
+  `;
+  const ul = el.querySelector('.attivita-list');
+  (c.activities || []).forEach(a => ul.appendChild(buildAttivita(a)));
+  return el;
+}
+
+function buildAttivita(a) {
+  const li = document.createElement('li');
+  li.className = 'attivita-item';
+  if(a.skipped) li.classList.add('skipped');
+
+  // top row: check + time + name + price
+  const topRow = document.createElement('div');
+  topRow.className = 'att-row';
+
+  // Check toggle button (shown only in view mode via CSS)
+  const checkBtn = document.createElement('button');
+  const isChecked = a.checked !== false; // default true
+  checkBtn.className = 'check-toggle' + (isChecked ? ' checked' : '');
+  checkBtn.title = 'Includi / escludi';
+  checkBtn.textContent = isChecked ? '✓' : '○';
+  checkBtn.onclick = (e) => {
+    e.stopPropagation();
+    const item = checkBtn.closest('.attivita-item');
+    const isChecked = checkBtn.classList.toggle('checked');
+    checkBtn.textContent = isChecked ? '✓' : '○';
+    item.classList.toggle('skipped', !isChecked);
+    calcola();
+    if (document.body.classList.contains('view-mode')) {
+      const c = item.closest('.citta'); if (c) buildCittaMap(c);
+    }
+  };
+
+  topRow.innerHTML = `
+    <div class="time-block">
+      <input type="time" value="${a.start||''}" onblur="calcola()">
+      <span>→</span>
+      <input type="time" value="${a.end||''}" onblur="calcola()">
+    </div>
+    <textarea class="att-name" rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'">${escHtml(a.name||'')}</textarea>
+    <div class="price-block">
+      <input type="number" value="${a.price||0}" min="0" onchange="calcola()"> €
+    </div>
+  `;
+  // Insert check button at the beginning
+  topRow.insertBefore(checkBtn, topRow.firstChild);
+  li.appendChild(topRow);
+
+  // notes
+  const notesArea = document.createElement('textarea');
+  notesArea.className = 'att-notes';
+  notesArea.placeholder = 'Note…';
+  notesArea.value = a.notes || '';
+  li.appendChild(notesArea);
+
+  // links section
+  const linksWrap = document.createElement('div');
+  linksWrap.className = 'links-section';
+  const linksLabel = document.createElement('div');
+  linksLabel.className = 'section-label';
+  linksLabel.textContent = 'Link';
+  linksWrap.appendChild(linksLabel);
+  const linksContainer = document.createElement('div');
+  linksContainer.className = 'links-container';
+  linksWrap.appendChild(linksContainer);
+  (a.links||[]).forEach(l => linksContainer.appendChild(buildLinkRow(l)));
+  const addLinkBtn = document.createElement('button');
+  addLinkBtn.className = 'btn btn-ghost btn-sm edit-only';
+  addLinkBtn.textContent = '+ Link';
+  addLinkBtn.onclick = () => linksContainer.appendChild(buildLinkRow({label:'', url:''}));
+  linksWrap.appendChild(addLinkBtn);
+  li.appendChild(linksWrap);
+
+  // view-mode link badges
+  const viewLinksDiv = document.createElement('div');
+  viewLinksDiv.className = 'view-links-badges';
+  viewLinksDiv.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
+  li.appendChild(viewLinksDiv);
+
+  // sotto-attività
+  const sottoWrap = document.createElement('div');
+  sottoWrap.className = 'sotto-wrap';
+  const sottoLabel = document.createElement('div');
+  sottoLabel.className = 'section-label';
+  sottoLabel.textContent = 'Sotto-attività';
+  sottoWrap.appendChild(sottoLabel);
+  const sottoLista = document.createElement('div');
+  sottoLista.className = 'sotto-lista';
+  sottoWrap.appendChild(sottoLista);
+  (a.sotto||[]).forEach(s => sottoLista.appendChild(buildSotto(s)));
+  const addSottoBtn = document.createElement('button');
+  addSottoBtn.className = 'btn btn-ghost btn-sm edit-only';
+  addSottoBtn.textContent = '+ Sotto-attività';
+  addSottoBtn.onclick = () => {
+    sottoLista.appendChild(buildSotto({name:'',price:0}));
+    calcola();
+  };
+  sottoWrap.appendChild(addSottoBtn);
+  li.appendChild(sottoWrap);
+
+  // controls row
+  const ctrlRow = document.createElement('div');
+  ctrlRow.className = 'att-controls edit-only';
+  ctrlRow.innerHTML = `
+    <div class="move-controls">
+      <button onclick="su(this,'li')">▲</button>
+      <button onclick="giu(this,'li')">▼</button>
+    </div>
+    <select class="sposta-select" onchange="spostaAttivitaSelect(this)">
+      <option value="">Sposta in città…</option>
+    </select>
+    <button class="btn btn-danger btn-sm" onclick="rimuoviAttivita(this)">🗑 Rimuovi</button>
+  `;
+  li.appendChild(ctrlRow);
+
+  return li;
+}
+
+function buildLinkRow(l) {
+  const row = document.createElement('div');
+  row.className = 'link-row';
+  row.innerHTML = `
+    <input type="text" class="link-label" placeholder="Etichetta" value="${escHtml(l.label||'')}">
+    <input type="text" class="link-url" placeholder="https://…" value="${escHtml(l.url||'')}">
+    <button class="btn-icon edit-only" onclick="this.closest('.link-row').remove()">✕</button>
+    <a class="link-view-badge" href="${escHtml(l.url||'#')}" target="_blank">${escHtml(l.label||'Link')}</a>
+  `;
+  const labelInput = row.querySelector('.link-label');
+  const urlInput = row.querySelector('.link-url');
+  const badge = row.querySelector('.link-view-badge');
+  const syncBadge = () => {
+    badge.href = urlInput.value || '#';
+    badge.textContent = labelInput.value || 'Link';
+  };
+  labelInput.addEventListener('input', syncBadge);
+  urlInput.addEventListener('input', syncBadge);
+  return row;
+}
+
+function buildSotto(s) {
+  const el = document.createElement('div');
+  el.className = 'sotto-item';
+  if(s.skipped) el.classList.add('skipped');
+
+  // Check toggle for sotto-attività
+  const checkBtn = document.createElement('button');
+  const isSChecked = s.skipped !== true;
+  checkBtn.className = 'check-toggle' + (isSChecked ? ' checked' : '');
+  checkBtn.title = 'Includi / escludi';
+  checkBtn.textContent = isSChecked ? '✓' : '○';
+  checkBtn.style.cssText = 'display:none;'; // shown only in view mode
+  checkBtn.onclick = (e) => {
+    e.stopPropagation();
+    const item = checkBtn.closest('.sotto-item');
+    const isChecked = checkBtn.classList.toggle('checked');
+    checkBtn.textContent = isChecked ? '✓' : '○';
+    item.classList.toggle('skipped', !isChecked);
+    calcola();
+  };
+
+  el.innerHTML = `
+    <textarea class="sotto-nome" rows="1" placeholder="Nome sotto-attività" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'">${escHtml(s.name||'')}</textarea>
+    <div class="sotto-item-row">
+      <div class="sotto-prezzo">
+        <input type="number" value="${s.price||0}" min="0" onchange="calcola()"> €
+      </div>
+      <button class="btn-icon" onclick="this.closest('.sotto-item').remove(); calcola()">✕</button>
+    </div>
+  `;
+
+  // Insert check in the sotto-item-row, before the delete btn
+  const row = el.querySelector('.sotto-item-row');
+  row.insertBefore(checkBtn, row.firstChild);
+
+  return el;
+}
+
+// ======== MODE TOGGLE ========
+function switchToView() {
+  document.body.classList.add('view-mode');
+  document.getElementById('viewBtn').classList.add('active');
+  document.getElementById('editBtn').classList.remove('active');
+
+  document.querySelectorAll('.attivita-item').forEach(item => {
+    // Show check toggle
+    const chk = item.querySelector('.att-row > .check-toggle');
+    if (chk) chk.style.display = '';
+
+    // Hide time-block if both times are empty; replace inputs with plain text
+    const timeBlock = item.querySelector('.time-block');
+    if (timeBlock) {
+      const times = timeBlock.querySelectorAll('input[type=time]');
+      const hasTime = Array.from(times).some(t => t.value);
+      timeBlock.style.display = hasTime ? '' : 'none';
+      if (hasTime && !timeBlock.querySelector('.time-view')) {
+        times.forEach(inp => {
+          inp.style.display = 'none';
+          const span = document.createElement('span');
+          span.className = 'time-view';
+          span.textContent = inp.value || '—';
+          inp.parentNode.insertBefore(span, inp.nextSibling);
+        });
+      }
+    }
+
+    // Links: sync badges, hide whole section if no links with URL
+    const linkRows = item.querySelectorAll('.link-row');
+    const linksSection = item.querySelector('.links-section');
+    let hasLinks = false;
+    linkRows.forEach(row => {
+      const badge = row.querySelector('.link-view-badge');
+      const url = row.querySelector('.link-url')?.value || '';
+      const label = row.querySelector('.link-label')?.value || 'Link';
+      if(badge) { badge.href = url || '#'; badge.textContent = label; }
+      if(url) hasLinks = true;
+    });
+    if(linksSection) linksSection.style.display = hasLinks ? '' : 'none';
+
+    // Name: replace textarea with plain div
+    const nameTA = item.querySelector('.att-name');
+    if(nameTA && !item.querySelector('.name-view')) {
+      nameTA.style.display = 'none';
+      const nameDiv = document.createElement('div');
+      nameDiv.className = 'name-view';
+      nameDiv.textContent = nameTA.value;
+      nameTA.parentNode.insertBefore(nameDiv, nameTA.nextSibling);
+    }
+
+    // Notes: replace textarea with plain div
+    const textarea = item.querySelector('.att-notes');
+    if(textarea && !item.querySelector('.note-view')) {
+      const testo = textarea.value.trim();
+      textarea.style.display = 'none';
+      if(testo) {
+        const noteDiv = document.createElement('div');
+        noteDiv.className = 'note-view';
+        noteDiv.textContent = testo;
+        textarea.parentNode.insertBefore(noteDiv, textarea.nextSibling);
+      }
+    }
+
+    // Sotto-attività: replace textarea con div
+    const sottoWrap = item.querySelector('.sotto-wrap');
+    const sottoItems = item.querySelectorAll('.sotto-item');
+    if(sottoWrap) sottoWrap.style.display = sottoItems.length ? '' : 'none';
+    sottoItems.forEach(s => {
+      // Show sotto check toggle
+      const sChk = s.querySelector('.check-toggle');
+      if (sChk) sChk.style.display = '';
+
+      const ta = s.querySelector('.sotto-nome');
+      if(ta && !s.querySelector('.sotto-nome-view')) {
+        ta.style.display = 'none';
+        const d = document.createElement('div');
+        d.className = 'sotto-nome-view';
+        d.textContent = ta.value;
+        ta.parentNode.insertBefore(d, ta.nextSibling);
+      }
+    });
+  });
+
+  document.querySelector('#topActions').style.display = 'none';
+  document.querySelector('.view-only').style.display = 'flex';
+
+  // Genera mappe per ogni città con link Maps
+  aggiornaMappe();
+}
+
+function switchToEdit() {
+  document.body.classList.remove('view-mode');
+  document.getElementById('editBtn').classList.add('active');
+  document.getElementById('viewBtn').classList.remove('active');
+
+  // Remove note-view and name-view divs, restore textareas
+  document.querySelectorAll('.note-view, .name-view, .sotto-nome-view').forEach(d => d.remove());
+  document.querySelectorAll('.att-notes, .att-name, .sotto-nome').forEach(n => n.style.display = '');
+  document.querySelectorAll('.links-section, .sotto-wrap').forEach(el => el.style.display = '');
+  // Restore time-block visibility and remove time-view spans
+  document.querySelectorAll('.time-block').forEach(tb => {
+    tb.style.display = '';
+    tb.querySelectorAll('.time-view').forEach(s => s.remove());
+    tb.querySelectorAll('input[type=time]').forEach(inp => inp.style.display = '');
+  });
+
+  // Hide check toggles
+  document.querySelectorAll('.check-toggle').forEach(btn => btn.style.display = 'none');
+
+  document.querySelector('#topActions').style.display = 'flex';
+  document.querySelector('.view-only').style.display = 'none';
+}
+
+// ======== TOGGLE GIORNO ========
+function toggleGiorno(header) {
+  header.closest('.giorno').classList.toggle('collapsed');
+}
+
+// ======== ACTIONS ========
+function aggiungiGiorno() {
+  const c = document.getElementById('contenitore');
+  const el = buildGiorno({title:'Nuovo Giorno', cities:[]}, c.children.length);
+  c.appendChild(el);
+  aggiornaSelect();
+}
+
+function rimuoviGiorno(btn) {
+  if(confirm('Eliminare questo giorno?')) {
+    btn.closest('.giorno').remove();
+    calcola();
+  }
+}
+
+function aggiungiCitta(btn) {
+  const giorno = btn.closest('.giorno');
+  const container = giorno.querySelector('.giorno-cities');
+  const el = buildCitta({name:'Nuova Città', activities:[]});
+  container.appendChild(el);
+  aggiornaSelect();
+}
+
+function rimuoviCitta(btn) {
+  if(confirm('Eliminare questa città?')) {
+    btn.closest('.citta').remove();
+    calcola();
+  }
+}
+
+function aggiungiAttivita(btn) {
+  const citta = btn.closest('.citta');
+  const ul = citta.querySelector('.attivita-list');
+  const el = buildAttivita({start:'',end:'',name:'Nuova attività',notes:'',price:0,links:[],sotto:[]});
+  ul.appendChild(el);
+  aggiornaSelect();
+  calcola();
+}
+
+function rimuoviAttivita(btn) {
+  if(confirm('Eliminare questa attività?')) {
+    const li = btn.closest('li');
+    const c = li.closest('.citta');
+    li.remove();
+    calcola();
+    if (document.body.classList.contains('view-mode') && c) buildCittaMap(c);
+  }
+}
+
+function su(btn, classe) {
+  const el = btn.closest(classe);
+  const prev = el.previousElementSibling;
+  if(prev) el.parentNode.insertBefore(el, prev);
+  calcola();
+  if (document.body.classList.contains('view-mode')) {
+    const c = el.closest('.citta'); if (c) buildCittaMap(c);
+  }
+}
+
+function giu(btn, classe) {
+  const el = btn.closest(classe);
+  const next = el.nextElementSibling;
+  if(next) el.parentNode.insertBefore(next, el);
+  calcola();
+  if (document.body.classList.contains('view-mode')) {
+    const c = el.closest('.citta'); if (c) buildCittaMap(c);
+  }
+}
+
+// ======== SELECT SPOSTA ========
+function aggiornaSelect() {
+  const giorni = document.querySelectorAll('.giorno');
+  const citta = document.querySelectorAll('.citta');
+
+  document.querySelectorAll('.citta select.sposta-select').forEach(sel => {
+    if(sel.closest('.citta-header')) {
+      sel.innerHTML = '<option value="">Sposta in giorno…</option>';
+      giorni.forEach((g, i) => {
+        const op = document.createElement('option');
+        op.value = i;
+        op.textContent = g.querySelector('.day-name').innerText;
+        sel.appendChild(op);
+      });
+    }
+  });
+
+  document.querySelectorAll('.att-controls select.sposta-select').forEach(sel => {
+    sel.innerHTML = '<option value="">Sposta in città…</option>';
+    citta.forEach((c, i) => {
+      const op = document.createElement('option');
+      op.value = i;
+      op.textContent = c.querySelector('h3').innerText;
+      sel.appendChild(op);
+    });
+  });
+}
+
+function spostaCittaSelect(sel) {
+  if(sel.value === '') return;
+  const giorni = document.querySelectorAll('.giorno');
+  const citta = sel.closest('.citta');
+  giorni[sel.value].querySelector('.giorno-cities').appendChild(citta);
+  sel.value = '';
+  calcola();
+}
+
+function spostaAttivitaSelect(sel) {
+  if(sel.value === '') return;
+  const citta = document.querySelectorAll('.citta');
+  const att = sel.closest('li');
+  citta[sel.value].querySelector('.attivita-list').appendChild(att);
+  sel.value = '';
+  calcola();
+}
+
+// ======== CALCOLA ========
+// Respects .skipped class on both attivita-item and sotto-item
+function calcola() {
+  let totale = 0;
+  document.querySelectorAll('.giorno').forEach(g => {
+    let dayTotal = 0;
+    g.querySelectorAll('.attivita-item').forEach(a => {
+      const isSkipped = a.classList.contains('skipped');
+      if (!isSkipped) {
+        const mainPrice = parseFloat(a.querySelector('.price-block input')?.value) || 0;
+        const sottoTotal = Array.from(a.querySelectorAll('.sotto-item')).reduce((s, si) => {
+          if (si.classList.contains('skipped')) return s;
+          return s + (parseFloat(si.querySelector('.sotto-prezzo input')?.value) || 0);
+        }, 0);
+        dayTotal += mainPrice + sottoTotal;
+      }
+    });
+    g.querySelectorAll('.day-total, .day-total2').forEach(el => {
+      el.textContent = Math.round(dayTotal * 100) / 100;
+    });
+    totale += dayTotal;
+  });
+  document.getElementById('totale').textContent = Math.round(totale * 100) / 100;
+}
+
+// ======== COPIA ========
+function copiaItinerario() {
+  let testo = '';
+  let totale = 0;
+  document.querySelectorAll('.giorno').forEach(g => {
+    testo += g.querySelector('.day-name').innerText + '\n';
+    let dayTotal = 0;
+    g.querySelectorAll('.citta').forEach(c => {
+      testo += '  ' + c.querySelector('h3').innerText + '\n';
+      c.querySelectorAll('.attivita-item').forEach(a => {
+        if (a.classList.contains('skipped')) return; // skip non selezionate
+        const times = Array.from(a.querySelectorAll('input[type=time]')).map(i => i.value);
+        const name = a.querySelector('.att-name')?.value || '';
+        const notes = a.querySelector('.att-notes')?.value || '';
+        const price = parseFloat(a.querySelector('.price-block input')?.value) || 0;
+        testo += `    ${times[0]} → ${times[1]}  ${name}`;
+        if(notes) testo += `  (${notes})`;
+        testo += `  ${price}€\n`;
+        a.querySelectorAll('.link-row').forEach(lr => {
+          const label = lr.querySelector('.link-label')?.value;
+          const url = lr.querySelector('.link-url')?.value;
+          if(url) testo += `      🔗 ${label||'Link'}: ${url}\n`;
+        });
+        a.querySelectorAll('.sotto-item').forEach(s => {
+          if (s.classList.contains('skipped')) return; // skip non selezionate
+          const sName = s.querySelector('.sotto-nome')?.value || '';
+          const sPrice = parseFloat(s.querySelector('input[type=number]')?.value) || 0;
+          testo += `      • ${sName}  ${sPrice}€\n`;
+          dayTotal += sPrice;
+        });
+        dayTotal += price;
+      });
+    });
+    testo += `  Totale giorno: ${dayTotal}€\n\n`;
+    totale += dayTotal;
+  });
+  testo += `Totale: ${totale}€`;
+  if(navigator.clipboard) {
+    navigator.clipboard.writeText(testo).then(() => alert('Itinerario copiato!')).catch(() => fallbackCopy(testo));
+  } else fallbackCopy(testo);
+}
+
+function fallbackCopy(testo) {
+  const t = document.createElement('textarea');
+  t.value = testo;
+  document.body.appendChild(t);
+  t.select();
+  try { document.execCommand('copy'); alert('Copiato!'); } catch(e) { alert('Impossibile copiare.'); }
+  document.body.removeChild(t);
+}
+
+// ======== SALVA ========
+// Legge il DOM corrente e aggiorna initialData nel sorgente HTML prima di scaricare
+function salvaFile() {
+  // 1. Costruisce un array dati dal DOM corrente
+  const data = [];
+  document.querySelectorAll('.giorno').forEach(g => {
+    const title = g.querySelector('.day-name').innerText.trim();
+    const cities = [];
+    g.querySelectorAll('.citta').forEach(c => {
+      const cityName = c.querySelector('h3').innerText.trim();
+      const activities = [];
+      c.querySelectorAll('.attivita-item').forEach(li => {
+        const times = li.querySelectorAll('input[type=time]');
+        const start = times[0] ? times[0].value : '';
+        const end   = times[1] ? times[1].value : '';
+        const name  = li.querySelector('.att-name') ? li.querySelector('.att-name').value : '';
+        const notes = li.querySelector('.att-notes') ? li.querySelector('.att-notes').value : '';
+        const price = parseFloat(li.querySelector('.price-block input') ? li.querySelector('.price-block input').value : 0) || 0;
+        const skipped = li.classList.contains('skipped');
+        const checked = li.querySelector('.check-toggle') ? li.querySelector('.check-toggle').classList.contains('checked') : true;
+        const links = [];
+        li.querySelectorAll('.link-row').forEach(lr => {
+          const lbl = lr.querySelector('.link-label') ? lr.querySelector('.link-label').value : '';
+          const url = lr.querySelector('.link-url') ? lr.querySelector('.link-url').value : '';
+          if(url) links.push({label: lbl, url: url});
+        });
+        const sotto = [];
+        li.querySelectorAll('.sotto-item').forEach(si => {
+          const sName = si.querySelector('.sotto-nome') ? si.querySelector('.sotto-nome').value : '';
+          const sPrice = parseFloat(si.querySelector('input[type=number]') ? si.querySelector('input[type=number]').value : 0) || 0;
+          const sSkipped = si.classList.contains('skipped');
+          sotto.push({name: sName, price: sPrice, skipped: sSkipped});
+        });
+        activities.push({start, end, name, notes, price, links, sotto, skipped, checked});
+      });
+      cities.push({name: cityName, activities});
+    });
+    const collapsed = g.classList.contains('collapsed');
+    data.push({title, cities, collapsed});
+  });
+
+  // 2. Sostituisce initialData nel sorgente con i dati aggiornati
+  const json = JSON.stringify(data, null, 2);
+  let html = document.documentElement.outerHTML;
+  html = html.replace(/const initialData = \[.*?\];\n/s, 'const initialData = ' + json + ';\n');
+
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Planner_Viaggio_' + new Date().toISOString().split('T')[0] + '.html';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+
+// ======== MAPPE PER CITTÀ ========
+const _maps = {}; // mapId -> leaflet map instance
+
+function hasMapsLabel(label) {
+  return /maps/i.test(label);
+}
+
+// Raccoglie waypoints da una città: link con etichetta "Maps"
+function getCittaWaypoints(cittaEl) {
+  const points = [];
+  cittaEl.querySelectorAll('.attivita-item').forEach(item => {
+    if (item.classList.contains('skipped')) return;
+    const attName = (item.querySelector('.att-name')?.value || '').trim();
+    item.querySelectorAll('.link-row').forEach(row => {
+      const label = (row.querySelector('.link-label')?.value || '').trim();
+      const url   = (row.querySelector('.link-url')?.value || '').trim();
+      if (!hasMapsLabel(label) || !url.startsWith('http')) return;
+      points.push({ name: attName, url });
+    });
+  });
+  return points;
+}
+
+// Costruisce URL google.com/maps/dir/ con tutte le tappe (apri in Maps)
+// Usa i nomi delle attività + città come tappe di testo
+function buildDirUrl(points, cityCtx) {
+  // Formato corretto: /maps/dir/Nome+Luogo,+Città/Altro+Luogo,+Città/
+  const stops = points.map(p => encodeURIComponent(p.name + ', ' + cityCtx)).join('/');
+  return 'https://www.google.com/maps/dir/' + stops;
+}
+
+// Geocodifica nome + città via Nominatim
+async function nominatimGeocode(name, cityCtx) {
+  try {
+    const q = encodeURIComponent(name + ', ' + cityCtx);
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+      headers: { 'Accept-Language': 'it', 'User-Agent': 'TravelPlanner/1.0' }
+    });
+    const d = await r.json();
+    if (d && d[0]) return [parseFloat(d[0].lat), parseFloat(d[0].lon)];
+  } catch(e) {}
+  return null;
+}
+
+// Costruisce/aggiorna mappa per una città
+async function buildCittaMap(cittaEl) {
+  // Rimuovi mappa precedente
+  const old = cittaEl.querySelector('.citta-map-wrap');
+  if (old) {
+    const id = old.dataset.mapid;
+    if (id && _maps[id]) { _maps[id].remove(); delete _maps[id]; }
+    old.remove();
+  }
+
+  const points = getCittaWaypoints(cittaEl);
+  if (points.length === 0) return;
+
+  const cityCtx = (cittaEl.querySelector('h3')?.innerText || '').trim().replace(/\s*\d+$/, '');
+  const mapId = 'cmap_' + Math.random().toString(36).slice(2);
+  const dirUrl = buildDirUrl(points, cityCtx);
+
+  // Wrapper
+  const wrap = document.createElement('div');
+  wrap.className = 'citta-map-wrap';
+  wrap.dataset.mapid = mapId;
+  wrap.innerHTML = `
+    <div class="citta-map-header">
+      <span>🗺 ${points.length} luogo${points.length > 1 ? 'hi' : ''}</span>
+      <a class="map-open-btn" href="${dirUrl}" target="_blank">↗ Apri percorso in Maps</a>
+    </div>
+    <div class="citta-map-el" id="${mapId}"></div>
+    <div class="citta-map-status" id="${mapId}_status">Caricamento pin…</div>
+  `;
+
+  // Inserisci sopra la lista attività
+  const body = cittaEl.querySelector('.citta-body');
+  if (body) body.insertBefore(wrap, body.firstChild);
+
+  // Init mappa Leaflet
+  const map = L.map(mapId, { zoomControl: true, scrollWheelZoom: false });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://openstreetmap.org">OSM</a>', maxZoom: 19
+  }).addTo(map);
+  map.setView([50.5, 4.3], 13);
+  _maps[mapId] = map;
+
+  // Geocodifica ogni punto col nome dell'attività + città
+  const found = [];
+  for (let i = 0; i < points.length; i++) {
+    const geo = await nominatimGeocode(points[i].name, cityCtx);
+    if (geo) found.push({ latlng: geo, name: points[i].name, num: i + 1, url: points[i].url });
+  }
+
+  const statusEl = document.getElementById(mapId + '_status');
+
+  if (found.length === 0) {
+    if (statusEl) statusEl.textContent = '⚠ Nessun luogo trovato — connessione assente?';
+    map.setView([50.5, 4.3], 6);
+    return;
+  }
+
+  // Pin numerati
+  found.forEach(p => {
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="map-num-icon">${p.num}</div>`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
+    });
+    L.marker(p.latlng, { icon })
+      .addTo(map)
+      .bindPopup(`<b>${p.num}. ${p.name}</b><br><a href="${p.url}" target="_blank">Apri in Maps</a>`);
+  });
+
+  // Percorso tratteggiato
+  if (found.length > 1) {
+    L.polyline(found.map(p => p.latlng), {
+      color: '#3a7bd5', weight: 3, opacity: 0.8, dashArray: '8,5'
+    }).addTo(map);
+  }
+
+  // Fit
+  const grp = L.featureGroup(found.map(p => L.circleMarker(p.latlng)));
+  map.fitBounds(grp.getBounds().pad(0.3));
+
+  if (statusEl) statusEl.textContent =
+    `📍 ${found.length}/${points.length} luoghi trovati — in ordine di itinerario`;
+}
+
+async function aggiornaMappe() {
+  for (const c of document.querySelectorAll('.citta')) {
+    await buildCittaMap(c);
+  }
+}
+
+// ======== INIT ========
+buildAll(initialData);
+aggiornaSelect();
+switchToView();
+</script>
+
+</body></html>
